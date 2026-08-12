@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoDash - Quản lý Biển số & Dòng tiền</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css?v=21">
+</head>
+
+<body>
+    <div class="app-container" id="mainApp">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i data-lucide="motorcycle"></i>
+                    <span>MotoDash</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="nav-dashboard" onclick="window.switchView('dashboard')">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Tổng quan (Kanban)</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-table" onclick="window.switchView('table')">
+                    <i data-lucide="table-2"></i>
+                    <span>Tiến độ chi tiết</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-expenses" onclick="window.switchView('expenses')">
+                    <i data-lucide="calculator"></i>
+                    <span>Sổ Thu/Chi</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-settings" onclick="window.switchView('settings')">
+                    <i data-lucide="settings"></i>
+                    <span>Cài đặt</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" id="displayUserName">Nhân viên</span>
+                        <button class="btn-outline-small" style="padding: 2px 6px; font-size: 10px; margin-top: 4px;"
+                            onclick="window.logout()">Đăng xuất</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" onclick="window.app.toggleSidebar()"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <button class="mobile-menu-toggle" onclick="window.app.toggleSidebar()">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="header-title-text">
+                        <h1>Bảng điều khiển</h1>
+                        <p class="date-display" id="currentDate">Hôm nay, ...</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline"
+                        style="margin-right: 12px; color: var(--accent-orange); border-color: rgba(245, 158, 11, 0.5);"
+                        onclick="window.app.openExpenseModal()">
+                        <i data-lucide="calculator"></i>
+                        <span>Thêm Thu/Chi</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="window.app.openModal()">
+                        <i data-lucide="plus"></i>
+                        <span>Thêm Hồ Sơ Mới</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <div id="dashboardView">
+                <!-- Overview Widgets -->
+                <section class="overview-cards">
+                    <div class="card stat-card glow-green">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i data-lucide="banknote"></i>
+                            </div>
+                            <p class="stat-label">Tổng Quỹ Tiền Mặt</p>
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-value" id="stat-cash" style="color: var(--brand-green);">0 ₫</h3>
+                        </div>
+                        <div style="display: flex; gap: 8px; margin-top: auto; padding-top: 24px;">
+                            <button class="btn btn-outline-small" onclick="window.app.remitCash()">Chốt nộp
+                                tiền</button>
+                            <button class="btn btn-outline-small" onclick="window.app.undoRemitCash()">Hủy chốt</button>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card glow-blue">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i data-lucide="landmark"></i>
+                            </div>
+                            <p class="stat-label">Chuyển Khoản (Chủ)</p>
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-value" id="stat-transfer">0 ₫</h3>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card glow-orange">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i data-lucide="inbox"></i>
+                            </div>
+                            <p class="stat-label">Đang Giữ (Chưa nộp)</p>
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-value" id="stat-staff-holding">0 ₫</h3>
+                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px;">
+                                <div id="stat-police-cash" style="font-size: 12px; color: var(--status-red); font-weight: 600;">
+                                    ⚠️ Chờ nộp CA: 0 ₫</div>
+                                <div id="stat-taxplate-cash" style="font-size: 12px; color: var(--accent-orange); font-weight: 600;">
+                                    ⚠️ Chờ nộp Thuế/Biển: 0 ₫</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card glow-red">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i data-lucide="wallet"></i>
+                            </div>
+                            <p class="stat-label">Tiền riêng (Nên rút về)</p>
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-value" id="stat-owner-pending">0 ₫</h3>
+                        </div>
+                        <button class="btn btn-outline-small" style="margin-top: auto;"
+                            onclick="window.app.reimburseAdvance()">Hoàn ứng</button>
+                    </div>
+
+                </section>
+
+                <!-- Analytics Row -->
+                <section class="analytics-row"
+                    style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 40px;">
+                    <!-- Donut Chart -->
+                    <div class="card" style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="stat-header" style="width: 100%; justify-content: space-between;">
+                            <p class="stat-label">Tiến Độ Hồ Sơ</p>
+                            <span class="badge">Hôm nay</span>
+                        </div>
+                        <div
+                            style="position: relative; width: 100%; max-width: 220px; aspect-ratio: 1; margin: 20px 0;">
+                            <canvas id="progressChart"></canvas>
+                            <div
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                <div style="font-size: 11px; color: var(--text-secondary);">Tổng HS</div>
+                                <div id="totalRecordsChart"
+                                    style="font-size: 24px; font-weight: 700; color: var(--text-primary);">0</div>
+                            </div>
+                        </div>
+                        <div id="chartLegend"
+                            style="width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+                            <!-- Legend items injected via JS -->
+                        </div>
+                        <div id="progressTotalMoney" style="width: 100%; text-align: center; margin-top: 16px; padding-top: 16px; border-top: 1px dashed rgba(0,0,0,0.1); font-weight: 700; color: var(--accent-orange); font-size: 14px;"></div>
+                    </div>
+
+                    <!-- AI Insight / Quick Actions block (placeholder to match design) -->
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        <div class="card"
+                            style="background-color: var(--card-dark); color: white; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <i data-lucide="sparkles"
+                                        style="color: var(--brand-green); width: 16px; height: 16px;"></i>
+                                    <p style="font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7);">AI Smart
+                                        Insight</p>
+                                </div>
+                                <h3 style="font-size: 16px; font-weight: 500; margin-bottom: 16px; max-width: 80%;">
+                                    Doanh thu tuần này tăng trưởng tốt. Bạn có muốn xem gợi ý tối ưu chi phí?</h3>
+                                <button class="btn btn-primary" style="padding: 8px 16px;">Xem Gợi Ý</button>
+                            </div>
+                            <i data-lucide="lightbulb"
+                                style="width: 80px; height: 80px; color: rgba(255,255,255,0.05);"></i>
+                        </div>
+
+                        <div>
+                            <p class="stat-label" style="margin-bottom: 12px;">Thao tác nhanh</p>
+                            <div style="display: flex; gap: 16px;">
+                                <button class="card"
+                                    style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 16px;"
+                                    onclick="window.app.openModal()">
+                                    <div class="stat-icon"
+                                        style="background: rgba(33,160,94,0.1); color: var(--brand-green);"><i
+                                            data-lucide="plus"></i></div>
+                                    <span style="font-size: 12px; font-weight: 500;">Thêm HS</span>
+                                </button>
+                                <button class="card"
+                                    style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 16px;"
+                                    onclick="window.app.toggleTodoPanel()">
+                                    <div class="stat-icon"
+                                        style="background: rgba(37,99,235,0.1); color: var(--accent-blue);"><i
+                                            data-lucide="check-square"></i></div>
+                                    <span style="font-size: 12px; font-weight: 500;">Sổ Tay</span>
+                                </button>
+                                <button class="card"
+                                    style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 16px;">
+                                    <div class="stat-icon"
+                                        style="background: rgba(234,88,12,0.1); color: var(--accent-orange);"><i
+                                            data-lucide="printer"></i></div>
+                                    <span style="font-size: 12px; font-weight: 500;">In Báo Cáo</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Kanban Board -->
+                <section class="kanban-board">
+                    <div class="kanban-column">
+                        <div class="column-header">
+                            <div class="column-title">
+                                <span class="dot dot-gray"></span>
+                                <h3>Khai báo & Hóa đơn</h3>
+                            </div>
+                            <span class="badge" id="count-stage-1">0</span>
+                        </div>
+                        <div class="column-body" id="stage-1" ondrop="window.app.drop(event)"
+                            ondragover="window.app.allowDrop(event)">
+                            <!-- Cards will be injected here -->
+                        </div>
+                    </div>
+
+                    <div class="kanban-column">
+                        <div class="column-header" style="flex-wrap: wrap;">
+                            <div class="column-title">
+                                <span class="dot dot-blue"></span>
+                                <h3>Chờ Bấm Biển</h3>
+                            </div>
+                            <span class="badge" id="count-stage-2">0</span>
+                            <div id="money-stage-2" style="width: 100%; font-size: 11px; color: var(--brand-blue); padding-left: 16px; margin-top: 4px; display: none;"></div>
+                        </div>
+                        <div class="column-body" id="stage-2" ondrop="window.app.drop(event)"
+                            ondragover="window.app.allowDrop(event)"></div>
+                    </div>
+
+                    <div class="kanban-column">
+                        <div class="column-header" style="flex-wrap: wrap;">
+                            <div class="column-title">
+                                <span class="dot dot-orange"></span>
+                                <h3>Chờ Đóng Phí 105k</h3>
+                            </div>
+                            <span class="badge" id="count-stage-3">0</span>
+                            <div id="money-stage-3" style="width: 100%; font-size: 11px; color: var(--accent-orange); padding-left: 16px; margin-top: 4px; display: none;"></div>
+                        </div>
+                        <div class="column-body" id="stage-3" ondrop="window.app.drop(event)"
+                            ondragover="window.app.allowDrop(event)"></div>
+                    </div>
+
+                    <div class="kanban-column">
+                        <div class="column-header" style="flex-wrap: wrap;">
+                            <div class="column-title">
+                                <span class="dot dot-purple"></span>
+                                <h3>Chờ Lấy Biển (100k)</h3>
+                            </div>
+                            <span class="badge" id="count-stage-4">0</span>
+                            <div id="money-stage-4" style="width: 100%; font-size: 11px; color: var(--accent-purple); padding-left: 16px; margin-top: 4px; display: none;"></div>
+                        </div>
+                        <div class="column-body" id="stage-4" ondrop="window.app.drop(event)"
+                            ondragover="window.app.allowDrop(event)"></div>
+                    </div>
+
+                    <div class="kanban-column">
+                        <div class="column-header">
+                            <div class="column-title">
+                                <span class="dot dot-green"></span>
+                                <h3>Hoàn Thành</h3>
+                            </div>
+                            <span class="badge" id="count-stage-5">0</span>
+                        </div>
+                        <div class="column-body" id="stage-5" ondrop="window.app.drop(event)"
+                            ondragover="window.app.allowDrop(event)"></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Table View -->
+            <div id="tableView" style="display: none;">
+                <div class="card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; flex: 1;">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Thao tác</th>
+                                    <th>Khách hàng</th>
+                                    <th>Khai thuế</th>
+                                    <th>Nhận Tạm Ứng</th>
+                                    <th>Nộp Thuế</th>
+                                    <th>Ngày bấm biển</th>
+                                    <th>Phí Biển</th>
+                                    <th>Phí CA</th>
+                                    <th>Tổng Chi</th>
+                                    <th>Công nợ NV Ứng</th>
+                                    <th>Ngày gửi DV</th>
+                                    <th>Ngày gọi KH</th>
+                                    <th>Ngày giao xe</th>
+                                    <th>Biển số</th>
+                                    <th>Hẹn trả biển</th>
+                                    <th>Ghi chú ĐKX</th>
+                                    <th>Ghi chú biển</th>
+                                    <th>Ngày có biển</th>
+                                    <th>Ngày giao biển</th>
+                                    <th>NV giao</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Table rows injected here -->
+                            </tbody>
+                            <tfoot id="tableFooter" style="background: rgba(0,0,0,0.02); font-weight: bold;">
+                                <!-- Table footer totals injected here -->
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expenses View -->
+            <div id="expensesView" style="display: none;">
+                <div class="card" style="padding: 0;">
+                    <div class="card-header" style="padding: 24px;">
+                        <h2>Sổ Thu/Chi Khác</h2>
+                        <p style="color: var(--text-secondary); margin-top: 4px;">Ghi chép các khoản mua sắm lặt vặt,
+                            ứng tiền thuế riêng lẻ...</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Loại</th>
+                                    <th>Lý do / Nội dung</th>
+                                    <th>Số tiền</th>
+                                    <th>Nguồn tiền</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTableBody">
+                                <!-- Expense rows injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="settingsView" style="display: none;">
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header"
+                        style="padding: 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2>Cài Đặt Loại Xe & Phí Mặc Định</h2>
+                            <p style="color: var(--text-secondary); margin-top: 4px;">Quản lý các loại xe và chi phí đi
+                                đóng (Thuế + Biển + CA) để tự động điền khi tạo hồ sơ</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="window.app.addCarType()">Thêm Loại Xe</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã Xe (ID)</th>
+                                    <th>Tên Loại Xe</th>
+                                    <th>Phí mặc định (VNĐ)</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="carTypesTableBody">
+                                <!-- Car types injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modal Form (Expense) -->
+    <div class="modal-overlay" id="expenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Thêm Thu/Chi Khác</h2>
+                <button class="btn-close" onclick="window.app.closeExpenseModal()"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="expenseForm" onsubmit="window.app.submitExpenseForm(event)">
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Loại giao dịch</label>
+                            <select id="expenseType">
+                                <option value="chi">Chi tiền (Mua đồ, trả phí...)</option>
+                                <option value="thu">Thu tiền (Nhận thêm, hoàn tiền...)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Số tiền (VNĐ)</label>
+                            <input type="number" id="expenseAmount" required placeholder="517000" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lý do / Nội dung chi tiết</label>
+                        <input type="text" id="expenseReason" required
+                            placeholder="Ví dụ: Mua keo vá, bút xoá, ổ điện...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nguồn tiền (Ai trả/nhận?)</label>
+                        <select id="expensePayer">
+                            <option value="staff">Nhân viên (Tiền túi cá nhân)</option>
+                            <option value="fund">Cửa hàng (Trích từ Két sắt/Quỹ)</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline"
+                            onclick="window.app.closeExpenseModal()">Hủy</button>
+                        <button type="submit" class="btn btn-primary"
+                            style="background-color: var(--accent-orange);">Lưu Giao Dịch</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal Form (Car Type) -->
+    <div class="modal-overlay" id="carTypeModal" style="z-index: 1005;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="carTypeModalTitle">Thêm Loại Xe</h2>
+                <button class="btn-close" onclick="window.app.closeCarTypeModal()"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="carTypeForm" onsubmit="window.app.submitCarTypeForm(event)">
+                    <input type="hidden" id="editCarTypeId" value="">
+                    <div class="form-group">
+                        <label>Mã Xe (Không dấu, không khoảng trắng)</label>
+                        <input type="text" id="carTypeIdInput" required placeholder="Ví dụ: klara_s"
+                            pattern="^[a-zA-Z0-9_]+$">
+                        <small style="color: var(--text-secondary); font-size: 11px;">Mã định danh (không được trùng).
+                            Ví dụ: evo_grand, feliz_s.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Tên Loại Xe hiển thị</label>
+                        <input type="text" id="carTypeNameInput" required placeholder="Ví dụ: Klara S (Có bằng)">
+                    </div>
+                    <div class="form-group">
+                        <label>Chi phí đi đóng mặc định (VNĐ)</label>
+                        <input type="number" id="carTypeFeeInput" required placeholder="Ví dụ: 685000" min="0">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline"
+                            onclick="window.app.closeCarTypeModal()">Hủy</button>
+                        <button type="submit" class="btn btn-primary" style="background-color: var(--brand-green);">Lưu
+                            Loại Xe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form (Add) -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Thêm Hồ Sơ Mới</h2>
+                <button class="btn-close" onclick="window.app.closeModal()"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="recordForm" onsubmit="window.app.submitForm(event)">
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Tên khách hàng</label>
+                            <input type="text" id="customerName" required placeholder="Ví dụ: Nguyễn Văn A">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <label>Loại Xe</label>
+                                <a href="#" onclick="window.app.addCarType(); return false;"
+                                    style="font-size: 11px; color: var(--brand-green); text-decoration: none; font-weight: 600;">+
+                                    Thêm xe</a>
+                            </div>
+                            <select id="carType" onchange="window.app.autoFillFees()">
+                                <option value="evo_grand">EVO GRAND (Có bằng)</option>
+                                <option value="evo_lite">EVO LITE (Không bằng)</option>
+                                <option value="other">Loại khác (Tự nhập)</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tiền Biển Số Thu Khách (VNĐ)</label>
+                            <input type="number" id="plateFee" required placeholder="1000000" min="0" value="1000000">
+                        </div>
+                        <div class="form-group">
+                            <label>Hình thức TT (Biển)</label>
+                            <select id="platePaymentMethod">
+                                <option value="cash">Tiền mặt</option>
+                                <option value="transfer">Chuyển khoản</option>
+                                <option value="unknown">Chưa xác định</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Chi phí đi đóng (VNĐ)</label>
+                            <input type="number" id="actualCost" required placeholder="Ví dụ: 685000" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="flex-direction: row; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="hasTaxCode" checked style="width: auto;">
+                        <label for="hasTaxCode" style="margin: 0; cursor: pointer;">Khách đã có Mã Số Thuế (MST)</label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline" onclick="window.app.closeModal()">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Lưu Hồ Sơ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form (Edit Detailed) -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>Cập Nhật Thông Tin Biển Số</h2>
+                <button class="btn-close" onclick="window.app.closeEditModal()"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" onsubmit="window.app.submitEditForm(event)">
+                    <input type="hidden" id="editId">
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Khách hàng</label>
+                            <input type="text" id="editCustomerName" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Biển số</label>
+                            <input type="text" id="editPlateNumber" placeholder="VD: 59A1-123.45">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label>Thu Khách (Phí DV)</label><input type="number" id="editPlateFee"
+                                min="0"></div>
+                        <div class="form-group">
+                            <label>Thu bằng</label>
+                            <select id="editPlatePaymentMethod">
+                                <option value="cash">Tiền mặt</option>
+                                <option value="transfer">Chuyển khoản</option>
+                                <option value="unknown">Chưa xác định</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label>Tiền nộp thuế</label><input type="number" id="editTaxCost"
+                                min="0"></div>
+                        <div class="form-group"><label>Phí biển số</label><input type="number" id="editPlateCost"
+                                min="0"></div>
+                        <div class="form-group"><label>Phí công an</label><input type="number" id="editPoliceCost"
+                                min="0"></div>
+                        <div class="form-group"
+                            style="border-left: 2px dashed rgba(16, 185, 129, 0.3); padding-left: 12px;">
+                            <label style="color: var(--brand-green);">Đã được hoàn ứng</label>
+                            <input type="number" id="editStaffReimbursed" min="0" placeholder="Tiền chủ trả lại">
+                        </div>
+                    </div>
+
+                    <div class="form-group"
+                        style="flex-direction: row; align-items: center; gap: 8px; margin-bottom: 16px;">
+                        <input type="checkbox" id="editHasTaxCode" style="width: auto;">
+                        <label for="editHasTaxCode" style="margin: 0; cursor: pointer;">Đã đăng ký Mã Số Thuế
+                            (MST)</label>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label>Ngày khai thuế</label><input type="date" id="editTaxDate"></div>
+                        <div class="form-group">
+                            <label>Ngày nộp thuế</label>
+                            <input type="date" id="editPayTaxDate">
+                            <select id="editTaxSource" style="margin-top: 4px; font-size: 11px; padding: 4px;">
+                                <option value="staff">Nguồn: Tiền túi (Nhân viên ứng)</option>
+                                <option value="store">Nguồn: Quỹ cửa hàng</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nộp phí biển</label>
+                            <input type="date" id="editPayPlateDate">
+                            <select id="editPlateSource" style="margin-top: 4px; font-size: 11px; padding: 4px;">
+                                <option value="staff">Nguồn: Tiền túi (Nhân viên ứng)</option>
+                                <option value="store">Nguồn: Quỹ cửa hàng</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nộp phí CA</label>
+                            <input type="date" id="editPayPoliceDate">
+                            <select id="editPoliceSource" style="margin-top: 4px; font-size: 11px; padding: 4px;">
+                                <option value="staff">Nguồn: Tiền túi (Nhân viên ứng)</option>
+                                <option value="store">Nguồn: Quỹ cửa hàng</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label>Ngày bấm biển</label><input type="date" id="editPressPlateDate">
+                        </div>
+                        <div class="form-group"><label>Ngày gửi dịch vụ</label><input type="date"
+                                id="editSendServiceDate"></div>
+                        <div class="form-group"><label>Ngày gọi KH bấm</label><input type="date"
+                                id="editCallCustomerDate"></div>
+                        <div class="form-group"><label>Ngày giao xe</label><input type="date" id="editDeliverCarDate">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label>Hẹn trả biển</label><input type="date" id="editPromisePlateDate">
+                        </div>
+                        <div class="form-group"><label>Ngày có biển</label><input type="date" id="editReceivePlateDate">
+                        </div>
+                        <div class="form-group"><label>Ngày giao biển</label><input type="date"
+                                id="editDeliverPlateDate"></div>
+                        <div class="form-group"><label>NV giao biển</label><input type="text" id="editDeliverStaff"
+                                placeholder="Tên NV"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ghi chú ĐKX</label>
+                            <input type="text" id="editRegNote" placeholder="Ghi chú đăng ký...">
+                        </div>
+                        <div class="form-group">
+                            <label>Ghi chú Biển số</label>
+                            <input type="text" id="editPlateNote" placeholder="Ghi chú biển...">
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer" style="display: flex; justify-content: space-between;">
+                        <button type="button" class="btn btn-outline"
+                            style="color: var(--status-red); border-color: rgba(239, 68, 68, 0.3);"
+                            onclick="window.app.deleteRecord()">Xóa Hồ Sơ</button>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn btn-outline"
+                                onclick="window.app.closeEditModal()">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sổ Tay Công Việc (To-Do List) -->
+    <button class="todo-fab" onclick="window.app.toggleTodoPanel()">
+        <i data-lucide="clipboard-list"></i>
+    </button>
+
+    <div class="todo-panel" id="todoPanel">
+        <div class="todo-header">
+            <h3><i data-lucide="check-square" style="width: 18px; height: 18px; margin-right: 8px;"></i>Sổ Tay Công Việc
+            </h3>
+            <button class="btn-close" onclick="window.app.toggleTodoPanel()"><i data-lucide="x"></i></button>
+        </div>
+        <div class="todo-body">
+            <div class="todo-input-group">
+                <input type="text" id="newTodoInput" placeholder="Thêm việc mới..."
+                    onkeypress="if(event.key === 'Enter') window.app.addTodo()">
+                <button class="btn btn-primary" style="padding: 0 12px;" onclick="window.app.addTodo()"><i
+                        data-lucide="plus"></i></button>
+            </div>
+            <ul class="todo-list" id="todoList">
+                <!-- Todo items will be injected here -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="app.js?v=31"></script>
+</body>
+
+</html>
