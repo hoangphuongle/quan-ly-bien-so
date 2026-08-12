@@ -33,23 +33,77 @@ async function initApp() {
     });
 
     try {
-        const { data, error } = await supabase.from('app_state').select('data').eq('id', 'main_store').single();
-        
-        if (error && error.code !== 'PGRST116') {
-            console.error("Lỗi tải dữ liệu Supabase:", error);
-            loadLocalFallback();
-        } else if (data) {
-            state = data.data;
+        console.log("Đang khôi phục dữ liệu từ máy tính lên Cloud...");
+        const savedState = localStorage.getItem('motodash_state');
+        if (savedState) {
+            state = JSON.parse(savedState);
             applyStateDefaults();
+            // ÉP PUSH LÊN CLOUD ĐỂ PHỤC HỒI
+            await supabase.from('app_state').upsert({ id: 'main_store', data: state });
+            alert("✅ Đã phục hồi toàn bộ dữ liệu cũ và đưa lên Cloud thành công! Anh/chị hãy tải lại trang web trên Netlify nhé!");
         } else {
-            // No data in Supabase yet, migrate from localStorage
-            console.log("Di cư dữ liệu từ Local Storage lên Supabase...");
-            loadLocalFallback();
-            await saveState(); // Push to cloud
+            // Fallback to normal loading if no local storage
+            const { data, error } = await supabase.from('app_state').select('data').eq('id', 'main_store').single();
+            if (data) {
+                state = data.data;
+                applyStateDefaults();
+            }
+        }
+        
+        // --- AUTO IMPORT DATA ---
+        if (!state.records || state.records.length === 0) {
+            console.log("Khôi phục danh sách khách hàng...");
+            const newRecords = [
+                { name: 'PHAN LÝ MỸ NGÂN', car: 'feliz_2025', tax: 518000 },
+                { name: 'NGUYỄN THỊ THU THUẬN', car: 'evo_grand_lite', tax: 378000 },
+                { name: 'ĐỖ THANH NHƠN', car: 'feliz_2', tax: 498000 },
+                { name: 'LÊ PHẠM HUỲNH BÁ KHUÊ', car: 'evo_grand', tax: 480000, skipPlatePolice: true },
+                { name: 'ĐINH THỊ TUYẾT NHUNG', car: 'amio', tax: 278000 },
+                { name: 'PHAN ĐỨC TÂM', car: 'flazz', tax: 320000 },
+                { name: 'PHAN TRUNG HIẾU', car: 'feliz_2025', tax: 518000 },
+                { name: 'VÕ THÀNH NHÂN', car: 'feliz_2', tax: 498000 },
+                { name: 'TRẦN ĐẠI HƯNG', car: 'evo_lite', tax: 340000 },
+                { name: 'TRẦN ĐẠI HƯNG (2)', car: 'evo_lite', tax: 340000 },
+                { name: 'TỐNG VĂN SONG', car: 'evo_grand', tax: 480000 },
+                { name: 'NGUYỄN QUỐC HOÀNG', car: 'flazz', tax: 320000 },
+                { name: 'NGUYỄN THỊ SÔNG HƯƠNG', car: 'evo_grand_lite', tax: 378000 },
+                { name: 'NGUYỄN THỊ HẢO', car: 'evo_grand_lite', tax: 0 },
+                { name: 'HOÀNG KHÁNH TRÂM', car: 'evo_grand', tax: 480000 },
+                { name: 'ĐỖ CÔNG VƯỢNG', car: 'evo_grand_lite', tax: 378000 },
+                { name: 'LÊ THỊ LỘC', car: 'evo_lite', tax: 340000 }
+            ];
+
+            newRecords.forEach(r => {
+                if (!state.records.find(x => x.customerName.trim().toUpperCase() === r.name.trim().toUpperCase())) {
+                    state.records.push({
+                        id: Date.now().toString() + Math.floor(Math.random()*1000),
+                        customerName: r.name,
+                        carType: r.car,
+                        plateFee: r.skipPlatePolice ? r.tax : r.tax + 100000 + 105000,
+                        platePaymentMethod: 'cash',
+                        stage: 1,
+                        actualCost: r.skipPlatePolice ? r.tax : r.tax + 100000 + 105000,
+                        taxCost: r.tax,
+                        policeCost: r.skipPlatePolice ? 0 : 100000,
+                        plateCost: r.skipPlatePolice ? 0 : 105000,
+                        hasTaxCode: true
+                    });
+                }
+            });
+            
+            let khue = state.records.find(r => r.customerName.trim().toUpperCase() === 'LÊ PHẠM HUỲNH BÁ KHUÊ');
+            if (khue && khue.taxCost === 0) {
+                khue.taxCost = 480000;
+                khue.actualCost = 480000;
+                khue.plateFee = 480000;
+                khue.policeCost = 0;
+                khue.plateCost = 0;
+            }
+            
+            await supabase.from('app_state').upsert({ id: 'main_store', data: state });
         }
     } catch (e) {
         console.error("Lỗi:", e);
-        loadLocalFallback();
     }
     
     // Cleanup old UI state
