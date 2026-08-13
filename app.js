@@ -192,6 +192,12 @@ function switchView(viewName) {
     const navEl = document.getElementById(`nav-${viewName}`);
     if (navEl) navEl.classList.add('active');
 
+    // Tự động đóng sidebar trên mobile khi chuyển trang
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+    }
+
     if (viewName === 'dashboard') {
         document.getElementById('dashboardView').style.display = 'block';
         document.getElementById('tableView').style.display = 'none';
