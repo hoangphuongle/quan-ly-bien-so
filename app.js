@@ -33,20 +33,26 @@ async function initApp() {
     });
 
     try {
-        console.log("Đang khôi phục dữ liệu từ máy tính lên Cloud...");
-        const savedState = localStorage.getItem('motodash_state');
-        if (savedState) {
-            state = JSON.parse(savedState);
+        console.log("Đang khôi phục dữ liệu từ Cloud...");
+        
+        // 1. Luôn ưu tiên lấy từ Cloud trước
+        const { data, error } = await supabase.from('app_state').select('data').eq('id', 'main_store').single();
+        
+        if (data && data.data) {
+            state = data.data;
             applyStateDefaults();
-            // ÉP PUSH LÊN CLOUD ĐỂ PHỤC HỒI
-            await supabase.from('app_state').upsert({ id: 'main_store', data: state });
-            alert("✅ Đã phục hồi toàn bộ dữ liệu cũ và đưa lên Cloud thành công! Anh/chị hãy tải lại trang web trên Netlify nhé!");
+            console.log("Đã tải dữ liệu từ Cloud thành công!");
         } else {
-            // Fallback to normal loading if no local storage
-            const { data, error } = await supabase.from('app_state').select('data').eq('id', 'main_store').single();
-            if (data) {
-                state = data.data;
-                applyStateDefaults();
+            // 2. Nếu Cloud lỗi hoặc trống, thử lấy từ máy tính dự phòng
+            console.log("Không tải được từ Cloud, thử dùng dữ liệu cục bộ...");
+            const savedState = localStorage.getItem('motodash_state');
+            if (savedState && savedState !== "undefined" && savedState !== "null") {
+                try {
+                    state = JSON.parse(savedState);
+                    applyStateDefaults();
+                } catch(e) {
+                    console.error("Lỗi khi đọc dữ liệu cục bộ:", e);
+                }
             }
         }
         
@@ -76,7 +82,7 @@ async function initApp() {
         if (!state.records) state.records = [];
         
         newRecords.forEach(r => {
-            if (!state.records.find(x => x.customerName.trim().toUpperCase() === r.name.trim().toUpperCase())) {
+            if (!state.records.find(x => x.customerName && x.customerName.trim().toUpperCase() === r.name.trim().toUpperCase())) {
                 state.records.push({
                     id: Date.now().toString() + Math.floor(Math.random()*1000),
                     customerName: r.name,
