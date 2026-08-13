@@ -185,7 +185,6 @@ function formatDate(dateString) {
 // Navigation
 function switchView(viewName) {
     state.currentView = viewName;
-    if(isOfflineMode) localStorage.setItem('motodash_state', JSON.stringify(state));
     
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
     const navEl = document.getElementById(`nav-${viewName}`);
