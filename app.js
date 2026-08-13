@@ -973,10 +973,11 @@ function renderTable() {
                 <td colspan="3" style="text-align: right; padding-right: 16px;">TỔNG CỘNG:</td>
                 <td style="color: #3B82F6;">${formatMoney(sumExpected)}</td>
                 <td style="color: var(--text-primary);">${formatMoney(sumTax)}</td>
+                <td></td> <!-- Ngày bấm biển -->
                 <td style="color: var(--text-primary);">${formatMoney(sumPlate)}</td>
                 <td style="color: var(--text-primary);">${formatMoney(sumPolice)}</td>
                 <td style="color: #10B981; font-size: 1.1em;">${formatMoney(sumTotalCost)}</td>
-                <td colspan="12"></td>
+                <td colspan="11"></td>
             </tr>
         `;
     }
