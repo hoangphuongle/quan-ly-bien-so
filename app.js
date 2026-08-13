@@ -9,6 +9,8 @@ let state = {
     currentView: 'dashboard'
 };
 
+const INITIAL_FUND = 0;
+
 // Expose to window for inline event handlers in HTML
 window.app = {};
 window.switchView = switchView;
