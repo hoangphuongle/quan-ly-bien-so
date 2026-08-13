@@ -864,7 +864,7 @@ function renderTable() {
     if (!tbody) return;
     tbody.innerHTML = '';
     
-    let sumExpected = 0, sumTax = 0, sumPlate = 0, sumPolice = 0, sumTotalCost = 0;
+    let sumExpected = 0, sumTax = 0, sumPlate = 0, sumPolice = 0, sumTotalCost = 0, sumPending = 0, sumAdvanced = 0;
     
     state.records.forEach(r => {
         let actualTax = r.taxCost || (r.actualCost > 0 ? r.actualCost - 205000 : 0);
@@ -901,6 +901,9 @@ function renderTable() {
         let staffReimbursed = r.staffReimbursed || 0;
         let currentCash = expectedCost - totalPaidStore - staffReimbursed;
         let pendingReimbursement = advancedForRecord - staffReimbursed;
+        
+        if (currentCash > 0) sumPending += currentCash;
+        if (pendingReimbursement > 0) sumAdvanced += pendingReimbursement;
         
         let badges = [];
         if (currentCash > 0) {
@@ -977,7 +980,11 @@ function renderTable() {
                 <td style="color: var(--text-primary);">${formatMoney(sumPlate)}</td>
                 <td style="color: var(--text-primary);">${formatMoney(sumPolice)}</td>
                 <td style="color: #10B981; font-size: 1.1em;">${formatMoney(sumTotalCost)}</td>
-                <td colspan="11"></td>
+                <td>
+                    ${sumPending > 0 ? `<div style="color: var(--brand-green); font-weight: bold; font-size: 0.9em;">Tổng chờ nộp: ${formatMoney(sumPending)}</div>` : ''}
+                    ${sumAdvanced > 0 ? `<div style="color: #EF4444; font-weight: bold; font-size: 0.9em; margin-top: 4px;">Tổng NV ứng: ${formatMoney(sumAdvanced)}</div>` : ''}
+                </td>
+                <td colspan="10"></td>
             </tr>
         `;
     }
