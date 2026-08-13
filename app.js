@@ -943,6 +943,14 @@ function renderTable() {
             paymentMethodClass = 'text-secondary';
         }
 
+        let isTaxPaid = r.payTaxDate || r.stage >= 2;
+        let isPlatePaid = r.payPlateDate || r.stage >= 4;
+        let isPolicePaid = r.payPoliceDate || r.stage >= 4;
+        
+        let taxStatusText = isTaxPaid ? (r.payTaxDate ? 'Đã nộp: ' + formatDate(r.payTaxDate) : 'Đã nộp') : 'Chưa nộp';
+        let plateStatusText = isPlatePaid ? (r.payPlateDate ? 'Đã nộp: ' + formatDate(r.payPlateDate) : 'Đã nộp') : 'Chưa nộp';
+        let policeStatusText = isPolicePaid ? (r.payPoliceDate ? 'Đã nộp: ' + formatDate(r.payPoliceDate) : 'Đã nộp') : 'Chưa nộp';
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
@@ -956,10 +964,10 @@ function renderTable() {
                     Tạm ứng (Đủ)
                 </small>
             </td>
-            <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualTax)}</div><small class="${r.payTaxDate ? '' : 'text-secondary'}" style="${r.payTaxDate ? 'color: #10B981; font-weight: 600;' : ''}">${r.payTaxDate ? 'Đã nộp: ' + formatDate(r.payTaxDate) : 'Chưa nộp'}</small></td>
+            <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualTax)}</div><small class="${isTaxPaid ? '' : 'text-secondary'}" style="${isTaxPaid ? 'color: #10B981; font-weight: 600;' : ''}">${taxStatusText}</small></td>
             <td>${formatDate(r.pressPlateDate)}</td>
-            <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualPlate)}</div><small class="${r.payPlateDate ? '' : 'text-secondary'}" style="${r.payPlateDate ? 'color: #10B981; font-weight: 600;' : ''}">${r.payPlateDate ? 'Đã nộp: ' + formatDate(r.payPlateDate) : 'Chưa nộp'}</small></td>
-            <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualPolice)}</div><small class="${r.payPoliceDate ? '' : 'text-secondary'}" style="${r.payPoliceDate ? 'color: #10B981; font-weight: 600;' : ''}">${r.payPoliceDate ? 'Đã nộp: ' + formatDate(r.payPoliceDate) : 'Chưa nộp'}</small></td>
+            <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualPlate)}</div><small class="${isPlatePaid ? '' : 'text-secondary'}" style="${isPlatePaid ? 'color: #10B981; font-weight: 600;' : ''}">${plateStatusText}</small></td>
+            <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualPolice)}</div><small class="${isPolicePaid ? '' : 'text-secondary'}" style="${isPolicePaid ? 'color: #10B981; font-weight: 600;' : ''}">${policeStatusText}</small></td>
             <td style="${totalStyle}"><strong style="color: #10B981; font-size: 1.1em;">${formatMoney(totalCost)}</strong></td>
             <td>${missingOrFullHtml}</td>
             <td>${formatDate(r.sendServiceDate)}</td>
