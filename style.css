@@ -48,6 +48,7 @@ body {
         radial-gradient(at 100% 0%, hsla(339,49%,30%,0.03) 0, transparent 50%);
     color: var(--text-primary);
     min-height: 100vh;
+    min-height: 100dvh;
     overflow: hidden; /* Prevent body scroll, let main content scroll */
 }
 
@@ -56,6 +57,7 @@ body {
     display: grid;
     grid-template-columns: var(--sidebar-width) 1fr;
     height: 100vh;
+    height: 100dvh;
 }
 
 /* Sidebar */
@@ -189,6 +191,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    height: 100dvh;
     overflow-y: auto;
     padding: 32px 40px;
     background: 
@@ -634,6 +637,7 @@ body {
     right: -400px;
     width: 350px;
     height: 100vh;
+    height: 100dvh;
     background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: var(--glass-blur);
     border-left: 1px solid var(--border-solid);
@@ -809,6 +813,7 @@ body {
     left: 0;
     width: 100%;
     height: 100vh;
+    height: 100dvh;
     background-color: var(--bg-dark);
     display: none;
     align-items: center;
