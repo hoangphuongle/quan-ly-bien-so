@@ -480,7 +480,16 @@ window.app.submitEditForm = (e) => {
         record.sendServiceDate = document.getElementById('editSendServiceDate').value;
         record.callCustomerDate = document.getElementById('editCallCustomerDate').value;
         record.deliverCarDate = document.getElementById('editDeliverCarDate').value;
-        record.promisePlateDate = document.getElementById('editPromisePlateDate').value;
+        
+        let promiseInput = document.getElementById('editPromisePlateDate').value;
+        if (record.payPlateDate && !promiseInput) {
+            let pDate = new Date(record.payPlateDate);
+            pDate.setDate(pDate.getDate() + 15);
+            record.promisePlateDate = pDate.toISOString().split('T')[0];
+        } else {
+            record.promisePlateDate = promiseInput;
+        }
+
         record.receivePlateDate = document.getElementById('editReceivePlateDate').value;
         record.deliverPlateDate = document.getElementById('editDeliverPlateDate').value;
         record.deliverStaff = document.getElementById('editDeliverStaff').value;
@@ -536,7 +545,18 @@ window.app.drop = (e) => {
             record.stage = newStage;
             if (newStage >= 2 && !record.taxPaidBy) record.taxPaidBy = record.platePaymentMethod === 'cash' ? 'staff' : 'owner';
             if (newStage >= 3 && !record.fee105kPaidBy) record.fee105kPaidBy = record.platePaymentMethod === 'cash' ? 'staff' : 'owner';
-            if (newStage >= 4 && !record.fee100kPaidBy) record.fee100kPaidBy = record.platePaymentMethod === 'cash' ? 'staff' : 'owner';
+            if (newStage >= 4 && !record.fee100kPaidBy) {
+                record.fee100kPaidBy = record.platePaymentMethod === 'cash' ? 'staff' : 'owner';
+                if (!record.payPlateDate) {
+                    let todayStr = new Date().toISOString().split('T')[0];
+                    record.payPlateDate = todayStr;
+                    if (!record.promisePlateDate) {
+                        let pDate = new Date();
+                        pDate.setDate(pDate.getDate() + 15);
+                        record.promisePlateDate = pDate.toISOString().split('T')[0];
+                    }
+                }
+            }
             saveState();
             renderBoard();
         }
