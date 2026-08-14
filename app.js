@@ -935,9 +935,9 @@ function renderTable() {
         let missingOrFullHtml = '';
         if (advancedForRecord > 0) {
             if (pendingReimbursement > 0) {
-                badgesAdvance.push(`<div class="badge" style="margin-top: 4px; background: rgba(239, 68, 68, 0.1); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.2);">Thiếu: ${formatMoney(pendingReimbursement)}</div>`);
+                badgesAdvance.push(`<div class="badge" style="margin-top: 4px; background: rgba(239, 68, 68, 0.08); color: #dc2626;">Thiếu: ${formatMoney(pendingReimbursement)}</div>`);
             } else {
-                badgesAdvance.push(`<div class="badge" style="margin-top: 4px; background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.2);">Đủ (Đã hoàn xong)</div>`);
+                badgesAdvance.push(`<div class="badge" style="margin-top: 4px; background: rgba(16, 185, 129, 0.08); color: #059669;">Đủ (Đã hoàn)</div>`);
             }
             missingOrFullHtml = `
                 <div style="text-align: left;">
@@ -979,11 +979,11 @@ function renderTable() {
             </td>
             <td>${r.customerName}</td>
             <td>${formatDate(r.taxDate)}</td>
-            <td style="background: rgba(59, 130, 246, 0.05);">
+            <td style="background: rgba(59, 130, 246, 0.03);">
                 <div style="font-weight: 700; color: #3B82F6;">${formatMoney(expectedCost)}</div>
-                <small class="text-secondary">
-                    ${currentCash > 0 ? `<span style="color: #10B981; font-weight: 600;">Chờ nộp: ${formatMoney(currentCash)}</span>` : (expectedCost > 0 ? 'Đã chi hết' : 'Tạm ứng (Đủ)')}
-                </small>
+                <div style="font-size: 11px; margin-top: 2px;">
+                    ${currentCash > 0 ? `<span style="color: #059669; font-weight: 600;">Chờ nộp: ${formatMoney(currentCash)}</span>` : `<span style="color: var(--text-secondary);">${expectedCost > 0 ? 'Đã chi hết' : 'Tạm ứng (Đủ)'}</span>`}
+                </div>
             </td>
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualTax)}</div><small class="${isTaxPaid ? '' : 'text-secondary'}" style="${isTaxPaid ? 'color: #10B981; font-weight: 600;' : ''}">${taxStatusText}</small></td>
             <td>${formatDate(r.pressPlateDate)}</td>
