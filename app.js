@@ -931,23 +931,24 @@ function renderTable() {
         if (currentCash > 0) sumPending += currentCash;
         if (pendingReimbursement > 0) sumAdvanced += pendingReimbursement;
         
-        let badges = [];
-        if (currentCash > 0) {
-            badges.push(`<div class="badge green" style="margin-top: 4px;">Chờ nộp: ${formatMoney(currentCash)}</div>`);
-        } else if (currentCash === 0 && expectedCost > 0) {
-            badges.push(`<div class="badge" style="margin-top: 4px; background: #f1f5f9; color: #64748b;">Đã chi hết tạm ứng</div>`);
+        let badgesAdvance = [];
+        let missingOrFullHtml = '';
+        if (advancedForRecord > 0) {
+            if (pendingReimbursement > 0) {
+                badgesAdvance.push(`<div class="badge" style="margin-top: 4px; background: rgba(239, 68, 68, 0.1); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.2);">Thiếu: ${formatMoney(pendingReimbursement)}</div>`);
+            } else {
+                badgesAdvance.push(`<div class="badge" style="margin-top: 4px; background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.2);">Đủ (Đã hoàn xong)</div>`);
+            }
+            missingOrFullHtml = `
+                <div style="text-align: left;">
+                    <div style="font-size: 11px; color: var(--text-secondary);">NV ứng: <strong style="color: var(--text-primary);">${formatMoney(advancedForRecord)}</strong></div>
+                    ${staffReimbursed > 0 ? `<div style="font-size: 11px; color: var(--text-secondary);">Đã hoàn: -${formatMoney(staffReimbursed)}</div>` : ''}
+                    ${badgesAdvance.join('')}
+                </div>
+            `;
+        } else {
+            missingOrFullHtml = `<div style="text-align: center; color: var(--text-secondary); font-size: 11px;">-</div>`;
         }
-        if (pendingReimbursement > 0) {
-            badges.push(`<div class="badge red" style="margin-top: 4px;">Cần rút bù: ${formatMoney(pendingReimbursement)}</div>`);
-        }
-
-        let missingOrFullHtml = `
-            <div style="text-align: left;">
-                <div style="font-size: 11px; color: var(--text-secondary);">Nhận tạm ứng: <strong style="color: var(--text-primary);">${formatMoney(expectedCost)}</strong></div>
-                ${totalCost > 0 ? `<div style="font-size: 11px; color: var(--text-secondary);">Đã chi: -${formatMoney(totalCost)}</div>` : ''}
-                ${badges.join('')}
-            </div>
-        `;
 
         const moneyStyle = 'background: rgba(245, 158, 11, 0.03); border-left: 1px solid rgba(245, 158, 11, 0.1);';
         const moneyText = 'color: #F59E0B; font-weight: 600; font-size: 1.05em;';
@@ -981,7 +982,7 @@ function renderTable() {
             <td style="background: rgba(59, 130, 246, 0.05);">
                 <div style="font-weight: 700; color: #3B82F6;">${formatMoney(expectedCost)}</div>
                 <small class="text-secondary">
-                    Tạm ứng (Đủ)
+                    ${currentCash > 0 ? `<span style="color: #10B981; font-weight: 600;">Chờ nộp: ${formatMoney(currentCash)}</span>` : (expectedCost > 0 ? 'Đã chi hết' : 'Tạm ứng (Đủ)')}
                 </small>
             </td>
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualTax)}</div><small class="${isTaxPaid ? '' : 'text-secondary'}" style="${isTaxPaid ? 'color: #10B981; font-weight: 600;' : ''}">${taxStatusText}</small></td>
