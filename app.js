@@ -22,10 +22,11 @@ const loginScreen = document.getElementById('loginScreen');
 
 // Auto Init
 document.getElementById('displayUserName').textContent = 'Admin';
+localStorage.removeItem('motodash_logged_in'); // Clear old persistent login
 checkLogin();
 
 function checkLogin() {
-    const isLoggedIn = localStorage.getItem('motodash_logged_in');
+    const isLoggedIn = sessionStorage.getItem('motodash_logged_in');
     if (isLoggedIn === 'true') {
         if(loginScreen) loginScreen.classList.remove('active');
         if(mainApp) mainApp.style.display = 'grid'; // Grid display required by app-container
@@ -41,7 +42,7 @@ window.app.login = (e) => {
     e.preventDefault();
     const pw = document.getElementById('loginPassword').value;
     if (pw === '123456') {
-        localStorage.setItem('motodash_logged_in', 'true');
+        sessionStorage.setItem('motodash_logged_in', 'true');
         document.getElementById('loginError').style.display = 'none';
         checkLogin();
     } else {
@@ -50,7 +51,7 @@ window.app.login = (e) => {
 };
 
 function handleLogout() {
-    localStorage.removeItem('motodash_logged_in');
+    sessionStorage.removeItem('motodash_logged_in');
     location.reload();
 }
 
