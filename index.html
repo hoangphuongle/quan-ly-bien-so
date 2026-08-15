@@ -19,7 +19,25 @@
 </head>
 
 <body>
-    <div class="app-container" id="mainApp">
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box card" style="display: flex; flex-direction: column; align-items: center; gap: 24px; background: rgba(255, 255, 255, 0.95);">
+            <div class="logo" style="justify-content: center; font-size: 24px;">
+                <i data-lucide="motorcycle" style="width: 32px; height: 32px;"></i>
+                <span>MotoDash</span>
+            </div>
+            <p style="color: var(--text-secondary); text-align: center; font-size: 14px;">Vui lòng nhập mật khẩu để truy cập hệ thống quản lý</p>
+            <form onsubmit="window.app.login(event)" style="width: 100%; display: flex; flex-direction: column; gap: 16px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <input type="password" id="loginPassword" required placeholder="Nhập mật khẩu..." style="text-align: center; font-size: 16px; padding: 12px; letter-spacing: 2px;">
+                </div>
+                <div id="loginError" style="color: var(--status-red); font-size: 12px; text-align: center; display: none;">Mật khẩu không chính xác!</div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 16px;">Đăng Nhập</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-container" id="mainApp" style="display: none;">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">

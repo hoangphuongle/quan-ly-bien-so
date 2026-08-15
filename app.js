@@ -18,12 +18,39 @@ window.logout = handleLogout;
 
 // DOM Elements
 const mainApp = document.getElementById('mainApp');
+const loginScreen = document.getElementById('loginScreen');
 
 // Auto Init
 document.getElementById('displayUserName').textContent = 'Admin';
-initApp();
+checkLogin();
+
+function checkLogin() {
+    const isLoggedIn = localStorage.getItem('motodash_logged_in');
+    if (isLoggedIn === 'true') {
+        if(loginScreen) loginScreen.classList.remove('active');
+        if(mainApp) mainApp.style.display = 'grid'; // Grid display required by app-container
+        initApp();
+    } else {
+        if(loginScreen) loginScreen.classList.add('active');
+        if(mainApp) mainApp.style.display = 'none';
+        lucide.createIcons(); // To render the motorcycle icon on login screen
+    }
+}
+
+window.app.login = (e) => {
+    e.preventDefault();
+    const pw = document.getElementById('loginPassword').value;
+    if (pw === '123456') {
+        localStorage.setItem('motodash_logged_in', 'true');
+        document.getElementById('loginError').style.display = 'none';
+        checkLogin();
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+};
 
 function handleLogout() {
+    localStorage.removeItem('motodash_logged_in');
     location.reload();
 }
 
