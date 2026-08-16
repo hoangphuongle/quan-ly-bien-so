@@ -1,36 +1,36 @@
 :root {
-    /* Colors - Pro Max Light Theme (Glassmorphism) */
-    --bg-dark: #f8fafc;
-    --bg-surface: rgba(255, 255, 255, 0.65);
-    --bg-surface-hover: rgba(255, 255, 255, 0.85);
-    --border-color: rgba(255, 255, 255, 0.5);
-    --border-solid: #e2e8f0;
+    /* Colors - SaaS Admin (SemRush Light) */
+    --bg-dark: #F9FAFB;
+    --bg-surface: #FFFFFF;
+    --bg-surface-hover: #F3F4F6;
+    --border-color: #E5E7EB;
+    --border-solid: #E5E7EB;
     
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
+    --text-primary: #111827;
+    --text-secondary: #4B5563;
     
-    --brand-green: #10b981; 
-    --brand-green-hover: #059669;
+    --brand-green: #F97316; 
+    --brand-green-hover: #EA580C;
     
     --accent-blue: #3b82f6;
     --accent-orange: #f59e0b;
     --accent-red: #ef4444;
     --accent-purple: #8b5cf6;
-    --accent-gray: #64748b;
+    --accent-gray: #6b7280;
 
     /* Specific UI Elements */
-    --card-dark: rgba(15, 23, 42, 0.85); 
-    --card-dark-text: #ffffff;
+    --card-dark: #FFFFFF; 
+    --card-dark-text: #111827;
 
-    /* Effects */
-    --glass-blur: blur(24px);
-    --shadow-md: 0 10px 40px -10px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.4) inset;
-    --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+    /* Effects - No Glass */
+    --glass-blur: none;
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     
     /* Layout */
-    --sidebar-width: 280px;
-    --radius-lg: 24px;
-    --radius-md: 16px;
+    --sidebar-width: 260px;
+    --radius-lg: 16px;
+    --radius-md: 12px;
 }
 
 * {
@@ -42,10 +42,6 @@
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: var(--bg-dark);
-    background-image: 
-        radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), 
-        radial-gradient(at 50% 0%, hsla(225,39%,30%,0.03) 0, transparent 50%), 
-        radial-gradient(at 100% 0%, hsla(339,49%,30%,0.03) 0, transparent 50%);
     color: var(--text-primary);
     min-height: 100vh;
     min-height: 100dvh;
@@ -62,9 +58,7 @@ body {
 
 /* Sidebar */
 .sidebar {
-    background-color: rgba(255, 255, 255, 0.4);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
+    background-color: var(--bg-surface);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
@@ -114,9 +108,9 @@ body {
 }
 
 .nav-item.active {
-    background-color: var(--card-dark);
-    color: var(--brand-green);
-    box-shadow: var(--shadow-md);
+    background-color: var(--bg-surface-hover);
+    color: var(--text-primary);
+    box-shadow: none;
 }
 
 .nav-item.badge.red {
@@ -133,9 +127,10 @@ body {
 .text-red { color: var(--status-red); font-weight: 500; }
 
 .nav-item.active {
-    background-color: rgba(16, 185, 129, 0.1);
-    color: var(--brand-green);
+    background-color: var(--bg-surface-hover);
+    color: var(--text-primary);
     position: relative;
+    box-shadow: none;
 }
 
 .nav-item.active::before {
@@ -194,9 +189,7 @@ body {
     height: 100dvh;
     overflow-y: auto;
     padding: 32px 40px;
-    background: 
-        radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.12) 0%, transparent 50%);
+    background-color: var(--bg-dark);
 }
 
 .top-header {
@@ -279,38 +272,36 @@ body {
 
 .card {
     background: var(--bg-surface);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     padding: 24px;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
     position: relative;
     overflow: hidden;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.6) inset;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 /* Premium Light Design: First card is dark glass */
 .overview-cards .card:first-child {
     grid-column: span 2;
-    background-color: var(--card-dark);
-    color: var(--card-dark-text);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.4), 0 0 0 1px rgba(255,255,255,0.1) inset;
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
 }
 
 .overview-cards .card:first-child .stat-label {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
 }
 
 .overview-cards .card:first-child .btn-outline-small {
-    border-color: rgba(255, 255, 255, 0.2);
-    color: white;
+    border-color: var(--border-color);
+    color: var(--text-secondary);
 }
 
 .stat-card {
@@ -341,7 +332,8 @@ body {
 .glow-purple .stat-icon { background: rgba(124, 58, 237, 0.1); color: var(--accent-purple); }
 
 .overview-cards .card:first-child .stat-icon {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(249, 115, 22, 0.1);
+    color: var(--brand-green);
 }
 
 .stat-label {
@@ -368,10 +360,8 @@ body {
 
 .kanban-column {
     flex: 0 0 320px;
-    background: rgba(248, 250, 252, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.4);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
@@ -428,21 +418,19 @@ body {
 
 /* Task Item (Draggable) */
 .task-card {
-    background-color: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     padding: 16px;
     cursor: grab;
     box-shadow: var(--shadow-sm);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
 }
 
 .task-card:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,1) inset;
-    background-color: rgba(255, 255, 255, 0.95);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(249, 115, 22, 0.3); /* subtle orange outline */
 }
 
 .task-card:active {
@@ -513,16 +501,14 @@ body {
 }
 
 .modal-content {
-    background-color: rgba(255, 255, 255, 0.85);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     width: 100%;
     max-width: 500px;
     transform: translateY(20px) scale(0.95);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,255,0.4) inset;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--shadow-lg);
 }
 
 .modal-overlay.active .modal-content {
@@ -639,9 +625,8 @@ body {
     width: 350px;
     height: 100vh;
     height: 100dvh;
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: var(--glass-blur);
-    border-left: 1px solid var(--border-solid);
+    background-color: var(--bg-surface);
+    border-left: 1px solid var(--border-color);
     box-shadow: -4px 0 24px rgba(0,0,0,0.05);
     z-index: 101;
     transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -784,7 +769,7 @@ body {
 }
 
 .data-table th {
-    background-color: rgba(255, 255, 255, 0.02);
+    background-color: var(--bg-dark);
     font-weight: 600;
     color: var(--text-secondary);
     position: sticky;
@@ -808,7 +793,6 @@ body {
     max-width: 800px;
 }
 
-/* Login Screen */
 .login-screen {
     position: fixed;
     top: 0;
@@ -821,7 +805,6 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    background: radial-gradient(circle at center, rgba(16, 185, 129, 0.1), var(--bg-dark) 60%);
 }
 
 .login-screen.active {
