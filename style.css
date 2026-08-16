@@ -952,6 +952,18 @@ body {
     
     .kanban-board {
         padding-bottom: 24px;
+        scroll-snap-type: x mandatory;
+        padding-inline: 16px;
+    }
+    
+    .kanban-column {
+        flex: 0 0 85vw;
+        scroll-snap-align: center;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 12px;
     }
     
     .todo-panel {
@@ -967,5 +979,18 @@ body {
     .data-table th, .data-table td {
         padding: 8px;
         font-size: 12px;
+    }
+
+    .data-table th:nth-child(2),
+    .data-table td:nth-child(2) {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background-color: #ffffff;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.08);
+    }
+    
+    .data-table th:nth-child(2) {
+        z-index: 12;
     }
 }
