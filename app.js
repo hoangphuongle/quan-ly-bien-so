@@ -603,7 +603,7 @@ window.app.reimburseAdvance = () => {
         let advancedForRecord = 0;
         if ((r.payTaxDate || r.stage >= 2) && r.taxSource !== 'store') advancedForRecord += actualTax;
         if ((r.payPlateDate || r.stage >= 4) && r.plateSource !== 'store') advancedForRecord += actualPlate;
-        if ((r.payPoliceDate || r.stage >= 4) && r.policeSource !== 'store') advancedForRecord += actualPolice;
+        if ((r.payPoliceDate || r.stage >= 5) && r.policeSource !== 'store') advancedForRecord += actualPolice;
         
         let pendingReimbursement = advancedForRecord - (r.staffReimbursed || 0);
         if (pendingReimbursement > 0 && availableFund > 0) {
@@ -713,7 +713,7 @@ function updateStats() {
             if (r.plateSource === 'staff' || r.fee105kPaidBy === 'staff') advancedForRecord += actualPlate;
             else totalPaidStore += actualPlate;
         }
-        if (r.payPoliceDate || r.stage >= 4) {
+        if (r.payPoliceDate || r.stage >= 5) {
             if (r.policeSource === 'staff' || r.fee100kPaidBy === 'staff') advancedForRecord += actualPolice;
             else totalPaidStore += actualPolice;
         }
@@ -723,7 +723,7 @@ function updateStats() {
         let totalCost = 0;
         if (r.payTaxDate || r.stage >= 2) totalCost += actualTax;
         if (r.payPlateDate || r.stage >= 4) totalCost += actualPlate;
-        if (r.payPoliceDate || r.stage >= 4) totalCost += actualPolice;
+        if (r.payPoliceDate || r.stage >= 5) totalCost += actualPolice;
 
         // Theo yêu cầu: cái nào nộp rồi trừ ra khỏi tiền đang giữ luôn
         // Tiền đang giữ = Tổng dự kiến - Tổng đã nộp (bất kể nguồn nào)
@@ -731,7 +731,7 @@ function updateStats() {
         if (currentCash > 0) {
             totalCashHeldByStaff += currentCash;
             
-            let isPolicePaid = r.payPoliceDate || r.stage >= 4;
+            let isPolicePaid = r.payPoliceDate || r.stage >= 5;
             let policeSource = r.policeSource || r.fee100kPaidBy || 'store';
             if (!isPolicePaid && policeSource === 'store') {
                 totalPoliceCashNeeded += actualPolice;
@@ -845,7 +845,7 @@ function renderBoard() {
             let totalCost = 0;
             if (r.payTaxDate || r.stage >= 2) totalCost += actualTax;
             if (r.payPlateDate || r.stage >= 4) totalCost += actualPlate;
-            if (r.payPoliceDate || r.stage >= 4) totalCost += actualPolice;
+            if (r.payPoliceDate || r.stage >= 5) totalCost += actualPolice;
 
             if (r.payTaxDate || r.stage >= 2) {
                 if (r.taxSource === 'staff' || r.taxPaidBy === 'staff') advancedForRecord += actualTax;
@@ -855,7 +855,7 @@ function renderBoard() {
                 if (r.plateSource === 'staff' || r.fee105kPaidBy === 'staff') advancedForRecord += actualPlate;
                 else totalPaidStore += actualPlate;
             }
-            if (r.payPoliceDate || r.stage >= 4) {
+            if (r.payPoliceDate || r.stage >= 5) {
                 if (r.policeSource === 'staff' || r.fee100kPaidBy === 'staff') advancedForRecord += actualPolice;
                 else totalPaidStore += actualPolice;
             }
@@ -940,7 +940,7 @@ function renderTable() {
             if (r.plateSource === 'staff' || r.fee105kPaidBy === 'staff') advancedForRecord += actualPlate;
             else totalPaidStore += actualPlate;
         }
-        if (r.payPoliceDate || r.stage >= 4) {
+        if (r.payPoliceDate || r.stage >= 5) {
             totalCost += actualPolice;
             if (r.policeSource === 'staff' || r.fee100kPaidBy === 'staff') advancedForRecord += actualPolice;
             else totalPaidStore += actualPolice;
@@ -994,7 +994,7 @@ function renderTable() {
 
         let isTaxPaid = r.payTaxDate || r.stage >= 2;
         let isPlatePaid = r.payPlateDate || r.stage >= 4;
-        let isPolicePaid = r.payPoliceDate || r.stage >= 4;
+        let isPolicePaid = r.payPoliceDate || r.stage >= 5;
         
         let taxStatusText = isTaxPaid ? (r.payTaxDate ? 'Đã nộp: ' + formatDate(r.payTaxDate) : 'Đã nộp') : 'Chưa nộp';
         let plateStatusText = isPlatePaid ? (r.payPlateDate ? 'Đã nộp: ' + formatDate(r.payPlateDate) : 'Đã nộp') : 'Chưa nộp';
