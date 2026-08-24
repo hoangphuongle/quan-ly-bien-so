@@ -957,7 +957,7 @@ function renderTable() {
         sumTotalCost += totalCost;
 
         let staffReimbursed = r.staffReimbursed || 0;
-        let currentCash = expectedCost - totalPaidStore - staffReimbursed;
+        let currentCash = expectedCost - totalCost;
         let pendingReimbursement = advancedForRecord - staffReimbursed;
         
         if (currentCash > 0) sumPending += currentCash;
