@@ -485,6 +485,10 @@ window.app.submitEditForm = (e) => {
         }
         record.hasTaxCode = document.getElementById('editHasTaxCode').checked;
         
+        if (document.getElementById('editPlateFee')) {
+            record.plateFee = Number(document.getElementById('editPlateFee').value) || 0;
+        }
+        
         if (document.getElementById('editTaxCost')) {
             record.taxCost = Number(document.getElementById('editTaxCost').value) || 0;
             record.plateCost = Number(document.getElementById('editPlateCost').value) || 0;
