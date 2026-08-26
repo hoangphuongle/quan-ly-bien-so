@@ -413,6 +413,7 @@ window.app.submitForm = (e) => {
         platePaymentMethod: document.getElementById('platePaymentMethod').value,
         actualCost: Number(document.getElementById('actualCost').value) || 0,
         hasTaxCode: document.getElementById('hasTaxCode').checked,
+        hasReceivedAdvance: document.getElementById('hasReceivedAdvance').checked,
         stage: 1, 
         taxPaidBy: null, fee105kPaidBy: null, fee100kPaidBy: null, staffReimbursed: 0,
         taxDate: '', pressPlateDate: '', sendServiceDate: '', callCustomerDate: '',
@@ -434,6 +435,9 @@ window.app.openEditModal = (id) => {
     document.getElementById('editPlateNumber').value = record.plateNumber || '';
     document.getElementById('editPlatePaymentMethod').value = record.platePaymentMethod || 'cash';
     document.getElementById('editHasTaxCode').checked = record.hasTaxCode;
+    if (document.getElementById('editHasReceivedAdvance')) {
+        document.getElementById('editHasReceivedAdvance').checked = record.hasReceivedAdvance !== false;
+    }
     
     // Check if editTaxCost exists before assigning, otherwise fallback to backward compatible properties
     if (document.getElementById('editTaxCost')) {
@@ -484,6 +488,9 @@ window.app.submitEditForm = (e) => {
             record.platePaymentMethod = document.getElementById('editPlatePaymentMethod').value;
         }
         record.hasTaxCode = document.getElementById('editHasTaxCode').checked;
+        if (document.getElementById('editHasReceivedAdvance')) {
+            record.hasReceivedAdvance = document.getElementById('editHasReceivedAdvance').checked;
+        }
         
         if (document.getElementById('editPlateFee')) {
             record.plateFee = Number(document.getElementById('editPlateFee').value) || 0;
@@ -729,9 +736,12 @@ function updateStats() {
         if (r.payPlateDate || r.stage >= 4) totalCost += actualPlate;
         if (r.payPoliceDate || r.stage >= 5) totalCost += actualPolice;
 
+        let expectedCost = actualTax + actualPlate + actualPolice;
+        let receivedAdvance = r.hasReceivedAdvance !== false ? expectedCost : 0;
+        
         // Theo yêu cầu: cái nào nộp rồi trừ ra khỏi tiền đang giữ luôn
         // Tiền đang giữ = Tổng dự kiến - Tổng đã nộp (bất kể nguồn nào)
-        let currentCash = expectedCost - totalCost;
+        let currentCash = receivedAdvance - totalCost;
         if (currentCash > 0) {
             totalCashHeldByStaff += currentCash;
             
@@ -957,7 +967,9 @@ function renderTable() {
         sumTotalCost += totalCost;
 
         let staffReimbursed = r.staffReimbursed || 0;
-        let currentCash = expectedCost - totalCost;
+        let expectedCost = actualTax + actualPlate + actualPolice;
+        let receivedAdvance = r.hasReceivedAdvance !== false ? expectedCost : 0;
+        let currentCash = receivedAdvance - totalCost;
         let pendingReimbursement = advancedForRecord - staffReimbursed;
         
         if (currentCash > 0) sumPending += currentCash;
@@ -1014,7 +1026,7 @@ function renderTable() {
             <td style="background: rgba(59, 130, 246, 0.03);">
                 <div style="font-weight: 700; color: #3B82F6;">${formatMoney(expectedCost)}</div>
                 <div style="font-size: 11px; margin-top: 2px;">
-                    ${currentCash > 0 ? `<span style="color: #059669; font-weight: 600;">Chờ nộp: ${formatMoney(currentCash)}</span>` : `<span style="color: var(--text-secondary);">${expectedCost > 0 ? 'Đã chi hết' : 'Tạm ứng (Đủ)'}</span>`}
+                    ${r.hasReceivedAdvance === false ? `<span style="color: var(--accent-orange); font-weight: 600;">Chưa nhận tạm ứng</span>` : (currentCash > 0 ? `<span style="color: #059669; font-weight: 600;">Chờ nộp: ${formatMoney(currentCash)}</span>` : `<span style="color: var(--text-secondary);">${expectedCost > 0 ? 'Đã chi hết' : 'Tạm ứng (Đủ)'}</span>`)}
                 </div>
             </td>
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualTax)}</div><small class="${isTaxPaid ? '' : 'text-secondary'}" style="${isTaxPaid ? 'color: #10B981; font-weight: 600;' : ''}">${taxStatusText}</small></td>
