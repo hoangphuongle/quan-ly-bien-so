@@ -630,36 +630,33 @@
                             (MST)</label>
                     </div>
                     
-                    <div class="form-group"
-                        style="flex-direction: row; align-items: center; gap: 8px; margin-bottom: 16px;">
-                        <input type="checkbox" id="editHasReceivedAdvance" style="width: auto;">
-                        <label for="editHasReceivedAdvance" style="margin: 0; cursor: pointer; color: var(--accent-orange); font-weight: 600;">Đã nhận đủ tiền đi đóng từ quỹ</label>
-                    </div>
-
                     <div class="form-row">
                         <div class="form-group"><label>Ngày khai thuế</label><input type="date" id="editTaxDate"></div>
                         <div class="form-group">
                             <label>Ngày nộp thuế</label>
                             <input type="date" id="editPayTaxDate">
                             <select id="editTaxSource" style="margin-top: 4px; font-size: 11px; padding: 4px;">
-                                <option value="staff">Nguồn: Tiền túi (Nhân viên ứng)</option>
                                 <option value="store">Nguồn: Quỹ cửa hàng</option>
+                                <option value="staff">Nguồn: Tiền túi (ĐÃ nhận tạm ứng)</option>
+                                <option value="staff_no_advance">Nguồn: Tiền túi (CHƯA nhận tạm ứng)</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Nộp phí biển</label>
                             <input type="date" id="editPayPlateDate">
                             <select id="editPlateSource" style="margin-top: 4px; font-size: 11px; padding: 4px;">
-                                <option value="staff">Nguồn: Tiền túi (Nhân viên ứng)</option>
                                 <option value="store">Nguồn: Quỹ cửa hàng</option>
+                                <option value="staff">Nguồn: Tiền túi (ĐÃ nhận tạm ứng)</option>
+                                <option value="staff_no_advance">Nguồn: Tiền túi (CHƯA nhận tạm ứng)</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Nộp phí CA</label>
                             <input type="date" id="editPayPoliceDate">
                             <select id="editPoliceSource" style="margin-top: 4px; font-size: 11px; padding: 4px;">
-                                <option value="staff">Nguồn: Tiền túi (Nhân viên ứng)</option>
                                 <option value="store">Nguồn: Quỹ cửa hàng</option>
+                                <option value="staff">Nguồn: Tiền túi (ĐÃ nhận tạm ứng)</option>
+                                <option value="staff_no_advance">Nguồn: Tiền túi (CHƯA nhận tạm ứng)</option>
                             </select>
                         </div>
                     </div>
@@ -740,7 +737,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script type="module" src="app.js?v=50"></script>
+    <script type="module" src="app.js?v=51"></script>
 </body>
 
 </html>

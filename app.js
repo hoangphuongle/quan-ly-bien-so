@@ -435,9 +435,6 @@ window.app.openEditModal = (id) => {
     document.getElementById('editPlateNumber').value = record.plateNumber || '';
     document.getElementById('editPlatePaymentMethod').value = record.platePaymentMethod || 'cash';
     document.getElementById('editHasTaxCode').checked = record.hasTaxCode;
-    if (document.getElementById('editHasReceivedAdvance')) {
-        document.getElementById('editHasReceivedAdvance').checked = record.hasReceivedAdvance !== false;
-    }
     
     // Check if editTaxCost exists before assigning, otherwise fallback to backward compatible properties
     if (document.getElementById('editTaxCost')) {
@@ -488,9 +485,6 @@ window.app.submitEditForm = (e) => {
             record.platePaymentMethod = document.getElementById('editPlatePaymentMethod').value;
         }
         record.hasTaxCode = document.getElementById('editHasTaxCode').checked;
-        if (document.getElementById('editHasReceivedAdvance')) {
-            record.hasReceivedAdvance = document.getElementById('editHasReceivedAdvance').checked;
-        }
         
         if (document.getElementById('editPlateFee')) {
             record.plateFee = Number(document.getElementById('editPlateFee').value) || 0;
@@ -717,15 +711,15 @@ function updateStats() {
         let advancedForRecord = 0;
 
         if (r.payTaxDate) {
-            if (r.taxSource === 'staff' || r.taxPaidBy === 'staff') advancedForRecord += actualTax;
+            if (r.taxSource === 'staff' || r.taxSource === 'staff_no_advance' || r.taxPaidBy === 'staff') advancedForRecord += actualTax;
             else totalPaidStore += actualTax;
         }
         if (r.payPlateDate) {
-            if (r.plateSource === 'staff' || r.fee105kPaidBy === 'staff') advancedForRecord += actualPlate;
+            if (r.plateSource === 'staff' || r.plateSource === 'staff_no_advance' || r.fee105kPaidBy === 'staff') advancedForRecord += actualPlate;
             else totalPaidStore += actualPlate;
         }
         if (r.payPoliceDate) {
-            if (r.policeSource === 'staff' || r.fee100kPaidBy === 'staff') advancedForRecord += actualPolice;
+            if (r.policeSource === 'staff' || r.policeSource === 'staff_no_advance' || r.fee100kPaidBy === 'staff') advancedForRecord += actualPolice;
             else totalPaidStore += actualPolice;
         }
 
@@ -736,7 +730,11 @@ function updateStats() {
         if (r.payPlateDate) totalCost += actualPlate;
         if (r.payPoliceDate) totalCost += actualPolice;
 
-        let receivedAdvance = r.hasReceivedAdvance !== false ? expectedCost : 0;
+        let hasReceivedAdvance = r.hasReceivedAdvance !== false;
+        if (r.taxSource === 'staff_no_advance' || r.plateSource === 'staff_no_advance' || r.policeSource === 'staff_no_advance') {
+            hasReceivedAdvance = false;
+        }
+        let receivedAdvance = hasReceivedAdvance ? expectedCost : 0;
         
         // Theo yêu cầu: cái nào nộp rồi trừ ra khỏi tiền đang giữ luôn
         // Tiền đang giữ = Tổng dự kiến - Tổng đã nộp (bất kể nguồn nào)
@@ -966,7 +964,11 @@ function renderTable() {
         sumTotalCost += totalCost;
 
         let staffReimbursed = r.staffReimbursed || 0;
-        let receivedAdvance = r.hasReceivedAdvance !== false ? expectedCost : 0;
+        let hasReceivedAdvance = r.hasReceivedAdvance !== false;
+        if (r.taxSource === 'staff_no_advance' || r.plateSource === 'staff_no_advance' || r.policeSource === 'staff_no_advance') {
+            hasReceivedAdvance = false;
+        }
+        let receivedAdvance = hasReceivedAdvance ? expectedCost : 0;
         let currentCash = receivedAdvance - totalCost;
         let pendingReimbursement = advancedForRecord - staffReimbursed;
         
@@ -1024,7 +1026,7 @@ function renderTable() {
             <td style="background: rgba(59, 130, 246, 0.03);">
                 <div style="font-weight: 700; color: #3B82F6;">${formatMoney(expectedCost)}</div>
                 <div style="font-size: 11px; margin-top: 2px;">
-                    ${r.hasReceivedAdvance === false ? `<span style="color: var(--accent-orange); font-weight: 600;">Chưa nhận tạm ứng</span>` : (currentCash > 0 ? `<span style="color: #059669; font-weight: 600;">Chờ nộp: ${formatMoney(currentCash)}</span>` : `<span style="color: var(--text-secondary);">${expectedCost > 0 ? 'Đã chi hết' : 'Tạm ứng (Đủ)'}</span>`)}
+                    ${!hasReceivedAdvance ? `<span style="color: var(--accent-orange); font-weight: 600;">Chưa nhận tạm ứng</span>` : (currentCash > 0 ? `<span style="color: #059669; font-weight: 600;">Chờ nộp: ${formatMoney(currentCash)}</span>` : `<span style="color: var(--text-secondary);">${expectedCost > 0 ? 'Đã chi hết' : 'Tạm ứng (Đủ)'}</span>`)}
                 </div>
             </td>
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualTax)}</div><small class="${isTaxPaid ? '' : 'text-secondary'}" style="${isTaxPaid ? 'color: #10B981; font-weight: 600;' : ''}">${taxStatusText}</small></td>
