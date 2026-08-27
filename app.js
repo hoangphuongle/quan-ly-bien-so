@@ -736,7 +736,6 @@ function updateStats() {
         if (r.payPlateDate) totalCost += actualPlate;
         if (r.payPoliceDate) totalCost += actualPolice;
 
-        let expectedCost = actualTax + actualPlate + actualPolice;
         let receivedAdvance = r.hasReceivedAdvance !== false ? expectedCost : 0;
         
         // Theo yêu cầu: cái nào nộp rồi trừ ra khỏi tiền đang giữ luôn
@@ -967,7 +966,6 @@ function renderTable() {
         sumTotalCost += totalCost;
 
         let staffReimbursed = r.staffReimbursed || 0;
-        let expectedCost = actualTax + actualPlate + actualPolice;
         let receivedAdvance = r.hasReceivedAdvance !== false ? expectedCost : 0;
         let currentCash = receivedAdvance - totalCost;
         let pendingReimbursement = advancedForRecord - staffReimbursed;
