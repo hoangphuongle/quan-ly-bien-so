@@ -615,9 +615,13 @@ window.app.reimburseAdvance = () => {
         let actualPolice = r.policeCost || (r.actualCost > 0 ? 100000 : 0);
 
         let advancedForRecord = 0;
-        if ((r.payTaxDate) && r.taxSource !== 'store') advancedForRecord += actualTax;
-        if ((r.payPlateDate) && r.plateSource !== 'store') advancedForRecord += actualPlate;
-        if ((r.payPoliceDate) && r.policeSource !== 'store') advancedForRecord += actualPolice;
+        let isTaxStaffNoAdvance = r.taxSource === 'staff_no_advance' || (!r.taxSource && r.taxPaidBy === 'staff' && r.hasReceivedAdvance === false);
+        let isPlateStaffNoAdvance = r.plateSource === 'staff_no_advance' || (!r.plateSource && r.fee105kPaidBy === 'staff' && r.hasReceivedAdvance === false);
+        let isPoliceStaffNoAdvance = r.policeSource === 'staff_no_advance' || (!r.policeSource && r.fee100kPaidBy === 'staff' && r.hasReceivedAdvance === false);
+
+        if ((r.payTaxDate) && isTaxStaffNoAdvance) advancedForRecord += actualTax;
+        if ((r.payPlateDate) && isPlateStaffNoAdvance) advancedForRecord += actualPlate;
+        if ((r.payPoliceDate) && isPoliceStaffNoAdvance) advancedForRecord += actualPolice;
         
         let pendingReimbursement = advancedForRecord - (r.staffReimbursed || 0);
         if (pendingReimbursement > 0 && availableFund > 0) {
@@ -718,17 +722,20 @@ function updateStats() {
         }
         let totalPaidStore = 0;
         let advancedForRecord = 0;
+        let isTaxStaffNoAdvance = r.taxSource === 'staff_no_advance' || (!r.taxSource && r.taxPaidBy === 'staff' && r.hasReceivedAdvance === false);
+        let isPlateStaffNoAdvance = r.plateSource === 'staff_no_advance' || (!r.plateSource && r.fee105kPaidBy === 'staff' && r.hasReceivedAdvance === false);
+        let isPoliceStaffNoAdvance = r.policeSource === 'staff_no_advance' || (!r.policeSource && r.fee100kPaidBy === 'staff' && r.hasReceivedAdvance === false);
 
         if (r.payTaxDate) {
-            if (r.taxSource === 'staff' || r.taxSource === 'staff_no_advance' || r.taxPaidBy === 'staff') advancedForRecord += actualTax;
+            if (isTaxStaffNoAdvance) advancedForRecord += actualTax;
             else totalPaidStore += actualTax;
         }
         if (r.payPlateDate) {
-            if (r.plateSource === 'staff' || r.plateSource === 'staff_no_advance' || r.fee105kPaidBy === 'staff') advancedForRecord += actualPlate;
+            if (isPlateStaffNoAdvance) advancedForRecord += actualPlate;
             else totalPaidStore += actualPlate;
         }
         if (r.payPoliceDate) {
-            if (r.policeSource === 'staff' || r.policeSource === 'staff_no_advance' || r.fee100kPaidBy === 'staff') advancedForRecord += actualPolice;
+            if (isPoliceStaffNoAdvance) advancedForRecord += actualPolice;
             else totalPaidStore += actualPolice;
         }
 
@@ -862,6 +869,9 @@ function renderBoard() {
 
             let totalPaidStore = 0;
             let advancedForRecord = 0;
+            let isTaxStaffNoAdvance = r.taxSource === 'staff_no_advance' || (!r.taxSource && r.taxPaidBy === 'staff' && r.hasReceivedAdvance === false);
+            let isPlateStaffNoAdvance = r.plateSource === 'staff_no_advance' || (!r.plateSource && r.fee105kPaidBy === 'staff' && r.hasReceivedAdvance === false);
+            let isPoliceStaffNoAdvance = r.policeSource === 'staff_no_advance' || (!r.policeSource && r.fee100kPaidBy === 'staff' && r.hasReceivedAdvance === false);
 
             let totalCost = 0;
             if (r.payTaxDate) totalCost += actualTax;
@@ -869,15 +879,15 @@ function renderBoard() {
             if (r.payPoliceDate) totalCost += actualPolice;
 
             if (r.payTaxDate) {
-                if (r.taxSource === 'staff' || r.taxPaidBy === 'staff') advancedForRecord += actualTax;
+                if (isTaxStaffNoAdvance) advancedForRecord += actualTax;
                 else totalPaidStore += actualTax;
             }
             if (r.payPlateDate) {
-                if (r.plateSource === 'staff' || r.fee105kPaidBy === 'staff') advancedForRecord += actualPlate;
+                if (isPlateStaffNoAdvance) advancedForRecord += actualPlate;
                 else totalPaidStore += actualPlate;
             }
             if (r.payPoliceDate) {
-                if (r.policeSource === 'staff' || r.fee100kPaidBy === 'staff') advancedForRecord += actualPolice;
+                if (isPoliceStaffNoAdvance) advancedForRecord += actualPolice;
                 else totalPaidStore += actualPolice;
             }
 
@@ -950,20 +960,24 @@ function renderTable() {
         let totalPaidStore = 0;
         let advancedForRecord = 0;
         let totalCost = 0;
+        
+        let isTaxStaffNoAdvance = r.taxSource === 'staff_no_advance' || (!r.taxSource && r.taxPaidBy === 'staff' && r.hasReceivedAdvance === false);
+        let isPlateStaffNoAdvance = r.plateSource === 'staff_no_advance' || (!r.plateSource && r.fee105kPaidBy === 'staff' && r.hasReceivedAdvance === false);
+        let isPoliceStaffNoAdvance = r.policeSource === 'staff_no_advance' || (!r.policeSource && r.fee100kPaidBy === 'staff' && r.hasReceivedAdvance === false);
 
         if (r.payTaxDate) {
             totalCost += actualTax;
-            if (r.taxSource === 'staff' || r.taxPaidBy === 'staff') advancedForRecord += actualTax;
+            if (isTaxStaffNoAdvance) advancedForRecord += actualTax;
             else totalPaidStore += actualTax;
         }
         if (r.payPlateDate) {
             totalCost += actualPlate;
-            if (r.plateSource === 'staff' || r.fee105kPaidBy === 'staff') advancedForRecord += actualPlate;
+            if (isPlateStaffNoAdvance) advancedForRecord += actualPlate;
             else totalPaidStore += actualPlate;
         }
         if (r.payPoliceDate) {
             totalCost += actualPolice;
-            if (r.policeSource === 'staff' || r.fee100kPaidBy === 'staff') advancedForRecord += actualPolice;
+            if (isPoliceStaffNoAdvance) advancedForRecord += actualPolice;
             else totalPaidStore += actualPolice;
         }
         
