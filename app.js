@@ -741,7 +741,7 @@ function updateStats() {
 
         let taxAdvance = r.taxSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? r.actualCost - 205000 : actualTax);
         let plateAdvance = r.plateSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 105000 : actualPlate);
-        let policeAdvance = r.policeSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 100000 : 100000);
+        let policeAdvance = r.policeSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 100000 : actualPolice);
         let receivedAdvance = taxAdvance + plateAdvance + policeAdvance;
         
         let hasReceivedAdvance = receivedAdvance > 0;
@@ -976,7 +976,7 @@ function renderTable() {
         let staffReimbursed = r.staffReimbursed || 0;
         let taxAdvance = r.taxSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? r.actualCost - 205000 : actualTax);
         let plateAdvance = r.plateSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 105000 : actualPlate);
-        let policeAdvance = r.policeSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 100000 : 100000);
+        let policeAdvance = r.policeSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 100000 : actualPolice);
         let receivedAdvance = taxAdvance + plateAdvance + policeAdvance;
         
         let hasReceivedAdvance = receivedAdvance > 0;
