@@ -612,7 +612,7 @@ window.app.reimburseAdvance = () => {
     state.records.forEach(r => {
         let actualTax = r.taxCost || (r.actualCost > 0 ? r.actualCost - 205000 : 0);
         let actualPlate = r.plateCost || (r.actualCost > 0 ? 105000 : 0);
-        let actualPolice = r.policeCost || (r.actualCost > 0 ? 100000 : 0);
+        let actualPolice = r.policeCost || (r.isPostOffice ? 70000 : (r.actualCost > 0 ? 100000 : 0));
 
         let advancedForRecord = 0;
         let isTaxStaffNoAdvance = r.taxSource === 'staff_no_advance' || (!r.taxSource && r.taxPaidBy === 'staff' && r.hasReceivedAdvance === false);
@@ -621,7 +621,7 @@ window.app.reimburseAdvance = () => {
 
         if ((r.payTaxDate) && isTaxStaffNoAdvance) advancedForRecord += actualTax;
         if ((r.payPlateDate) && isPlateStaffNoAdvance) advancedForRecord += actualPlate;
-        if ((r.payPoliceDate) && isPoliceStaffNoAdvance) advancedForRecord += actualPolice;
+        if ((r.payPoliceDate || (r.isPostOffice ? r.postOfficeDate : '')) && isPoliceStaffNoAdvance) advancedForRecord += actualPolice;
         
         let pendingReimbursement = advancedForRecord - (r.staffReimbursed || 0);
         if (pendingReimbursement > 0 && availableFund > 0) {
@@ -710,7 +710,7 @@ function updateStats() {
 
         let actualTax = r.taxCost || (r.actualCost > 0 ? r.actualCost - 205000 : 0);
         let actualPlate = r.plateCost || (r.actualCost > 0 ? 105000 : 0);
-        let actualPolice = r.policeCost || (r.actualCost > 0 ? 100000 : 0);
+        let actualPolice = r.policeCost || (r.isPostOffice ? 70000 : (r.actualCost > 0 ? 100000 : 0));
         
         let expectedCost = actualTax + actualPlate + actualPolice;
 
@@ -734,7 +734,7 @@ function updateStats() {
             if (isPlateStaffNoAdvance) advancedForRecord += actualPlate;
             else totalPaidStore += actualPlate;
         }
-        if (r.payPoliceDate) {
+        if (r.payPoliceDate || (r.isPostOffice ? r.postOfficeDate : '')) {
             if (isPoliceStaffNoAdvance) advancedForRecord += actualPolice;
             else totalPaidStore += actualPolice;
         }
@@ -744,7 +744,7 @@ function updateStats() {
         let totalCost = 0;
         if (r.payTaxDate) totalCost += actualTax;
         if (r.payPlateDate) totalCost += actualPlate;
-        if (r.payPoliceDate) totalCost += actualPolice;
+        if (r.payPoliceDate || (r.isPostOffice ? r.postOfficeDate : '')) totalCost += actualPolice;
 
         let taxAdvance = r.taxSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? r.actualCost - 205000 : actualTax);
         let plateAdvance = r.plateSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 105000 : actualPlate);
@@ -759,7 +759,7 @@ function updateStats() {
         if (currentCash > 0) {
             totalCashHeldByStaff += currentCash;
             
-            let isPolicePaid = r.payPoliceDate;
+            let isPolicePaid = r.payPoliceDate || (r.isPostOffice ? r.postOfficeDate : '');
             let policeSource = r.policeSource || r.fee100kPaidBy || 'store';
             if (!isPolicePaid && policeSource === 'store') {
                 totalPoliceCashNeeded += actualPolice;
@@ -841,7 +841,7 @@ function renderBoard() {
                 let actualPlate = r.plateCost || (r.actualCost > 0 ? 105000 : 0);
                 moneySums[3] += actualPlate;
             } else if (r.stage === 4) {
-                let actualPolice = r.policeCost || (r.actualCost > 0 ? 100000 : 0);
+                let actualPolice = r.policeCost || (r.isPostOffice ? 70000 : (r.actualCost > 0 ? 100000 : 0));
                 moneySums[4] += actualPolice;
             }
             
@@ -857,7 +857,7 @@ function renderBoard() {
             
             let actualTax = r.taxCost || (r.actualCost > 0 ? r.actualCost - 205000 : 0);
             let actualPlate = r.plateCost || (r.actualCost > 0 ? 105000 : 0);
-            let actualPolice = r.policeCost || (r.actualCost > 0 ? 100000 : 0);
+            let actualPolice = r.policeCost || (r.isPostOffice ? 70000 : (r.actualCost > 0 ? 100000 : 0));
             let expectedCost = actualTax + actualPlate + actualPolice;
 
             // Tự động tính Hẹn trả biển (15 ngày) nếu đã có ngày nộp phí biển mà chưa có hẹn
@@ -876,7 +876,7 @@ function renderBoard() {
             let totalCost = 0;
             if (r.payTaxDate) totalCost += actualTax;
             if (r.payPlateDate) totalCost += actualPlate;
-            if (r.payPoliceDate) totalCost += actualPolice;
+            if (r.payPoliceDate || (r.isPostOffice ? r.postOfficeDate : '')) totalCost += actualPolice;
 
             if (r.payTaxDate) {
                 if (isTaxStaffNoAdvance) advancedForRecord += actualTax;
@@ -886,7 +886,7 @@ function renderBoard() {
                 if (isPlateStaffNoAdvance) advancedForRecord += actualPlate;
                 else totalPaidStore += actualPlate;
             }
-            if (r.payPoliceDate) {
+            if (r.payPoliceDate || (r.isPostOffice ? r.postOfficeDate : '')) {
                 if (isPoliceStaffNoAdvance) advancedForRecord += actualPolice;
                 else totalPaidStore += actualPolice;
             }
@@ -975,7 +975,7 @@ function renderTable() {
             if (isPlateStaffNoAdvance) advancedForRecord += actualPlate;
             else totalPaidStore += actualPlate;
         }
-        if (r.payPoliceDate) {
+        if (r.payPoliceDate || (r.isPostOffice ? r.postOfficeDate : '')) {
             totalCost += actualPolice;
             if (isPoliceStaffNoAdvance) advancedForRecord += actualPolice;
             else totalPaidStore += actualPolice;
@@ -1035,7 +1035,7 @@ function renderTable() {
 
         let isTaxPaid = r.payTaxDate;
         let isPlatePaid = r.payPlateDate;
-        let isPolicePaid = r.payPoliceDate;
+        let isPolicePaid = r.payPoliceDate || (r.isPostOffice ? r.postOfficeDate : '');
         
         function getFeeStatus(isPaid, payDate, source) {
             if (!isPaid) return { text: 'Chưa nộp', color: '', class: 'text-secondary' };
@@ -1048,7 +1048,7 @@ function renderTable() {
 
         let taxStatus = getFeeStatus(isTaxPaid, r.payTaxDate, r.taxSource);
         let plateStatus = getFeeStatus(isPlatePaid, r.payPlateDate, r.plateSource);
-        let policeStatus = getFeeStatus(isPolicePaid, r.payPoliceDate, r.policeSource);
+        let policeStatus = getFeeStatus(isPolicePaid, r.payPoliceDate || (r.isPostOffice ? r.postOfficeDate : ''), r.policeSource);
         
         if (r.isPostOffice) {
             policeStatus.text += `<br><span style="color:var(--accent-orange);font-size:0.95em;">(Bưu điện${r.postOfficeDate ? ': ' + formatDate(r.postOfficeDate) : ''})</span>`;
