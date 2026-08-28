@@ -612,7 +612,7 @@ window.app.reimburseAdvance = () => {
     state.records.forEach(r => {
         let actualTax = r.taxCost || (r.actualCost > 0 ? r.actualCost - 205000 : 0);
         let actualPlate = r.plateCost || (r.actualCost > 0 ? 105000 : 0);
-        let actualPolice = r.policeCost || (r.isPostOffice ? 70000 : (r.actualCost > 0 ? 100000 : 0));
+        let actualPolice = r.isPostOffice ? (r.policeCost === 100000 ? 70000 : (r.policeCost || 70000)) : (r.policeCost || (r.actualCost > 0 ? 100000 : 0));
 
         let advancedForRecord = 0;
         let isTaxStaffNoAdvance = r.taxSource === 'staff_no_advance' || (!r.taxSource && r.taxPaidBy === 'staff' && r.hasReceivedAdvance === false);
@@ -669,7 +669,7 @@ function calculateCurrentFund() {
         let expectedCost = 0;
         let actualTax = r.taxCost || (r.actualCost > 0 ? r.actualCost - 205000 : 0);
         let actualPlate = r.plateCost || (r.actualCost > 0 ? 105000 : 0);
-        let actualPolice = r.policeCost || (r.actualCost > 0 ? 100000 : 0);
+        let actualPolice = r.isPostOffice ? (r.policeCost === 100000 ? 70000 : (r.policeCost || 70000)) : (r.policeCost || (r.actualCost > 0 ? 100000 : 0));
         expectedCost = actualTax + actualPlate + actualPolice;
 
         if (r.carPaymentMethod === 'cash') totalCashIn += (Number(r.carPrice) || 0);
@@ -710,7 +710,7 @@ function updateStats() {
 
         let actualTax = r.taxCost || (r.actualCost > 0 ? r.actualCost - 205000 : 0);
         let actualPlate = r.plateCost || (r.actualCost > 0 ? 105000 : 0);
-        let actualPolice = r.policeCost || (r.isPostOffice ? 70000 : (r.actualCost > 0 ? 100000 : 0));
+        let actualPolice = r.isPostOffice ? (r.policeCost === 100000 ? 70000 : (r.policeCost || 70000)) : (r.policeCost || (r.actualCost > 0 ? 100000 : 0));
         
         let expectedCost = actualTax + actualPlate + actualPolice;
 
@@ -841,7 +841,7 @@ function renderBoard() {
                 let actualPlate = r.plateCost || (r.actualCost > 0 ? 105000 : 0);
                 moneySums[3] += actualPlate;
             } else if (r.stage === 4) {
-                let actualPolice = r.policeCost || (r.isPostOffice ? 70000 : (r.actualCost > 0 ? 100000 : 0));
+                let actualPolice = r.isPostOffice ? (r.policeCost === 100000 ? 70000 : (r.policeCost || 70000)) : (r.policeCost || (r.actualCost > 0 ? 100000 : 0));
                 moneySums[4] += actualPolice;
             }
             
@@ -857,7 +857,7 @@ function renderBoard() {
             
             let actualTax = r.taxCost || (r.actualCost > 0 ? r.actualCost - 205000 : 0);
             let actualPlate = r.plateCost || (r.actualCost > 0 ? 105000 : 0);
-            let actualPolice = r.policeCost || (r.isPostOffice ? 70000 : (r.actualCost > 0 ? 100000 : 0));
+            let actualPolice = r.isPostOffice ? (r.policeCost === 100000 ? 70000 : (r.policeCost || 70000)) : (r.policeCost || (r.actualCost > 0 ? 100000 : 0));
             let expectedCost = actualTax + actualPlate + actualPolice;
 
             // Tự động tính Hẹn trả biển (15 ngày) nếu đã có ngày nộp phí biển mà chưa có hẹn
@@ -954,7 +954,7 @@ function renderTable() {
     state.records.forEach(r => {
         let actualTax = r.taxCost || (r.actualCost > 0 ? r.actualCost - 205000 : 0);
         let actualPlate = r.plateCost || (r.actualCost > 0 ? 105000 : 0);
-        let actualPolice = r.policeCost || (r.actualCost > 0 ? 100000 : 0);
+        let actualPolice = r.isPostOffice ? (r.policeCost === 100000 ? 70000 : (r.policeCost || 70000)) : (r.policeCost || (r.actualCost > 0 ? 100000 : 0));
         
         let expectedCost = actualTax + actualPlate + actualPolice;
         let totalPaidStore = 0;
