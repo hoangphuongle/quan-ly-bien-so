@@ -1250,7 +1250,9 @@ window.app.renderChart = () => {
     
     const counts = { 1:0, 2:0, 3:0, 4:0, 5:0 };
     let totalProgressMoney = 0;
+    let postOfficeCount = 0;
     state.records.forEach(r => {
+        if (r.isPostOffice) postOfficeCount++;
         counts[r.stage]++;
         if (r.stage === 2) {
             totalProgressMoney += r.taxCost || (r.actualCost > 0 ? r.actualCost - 205000 : 0);
@@ -1320,7 +1322,21 @@ window.app.renderChart = () => {
                 </div>
             `;
         });
+        
+        legendHTML += `
+            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="package" style="width: 14px; height: 14px; color: var(--accent-orange);"></i>
+                    <span style="color: var(--text-primary); font-weight: 600;">Giao nhận bưu điện</span>
+                </div>
+                <div style="font-weight: 700; color: var(--accent-orange);">
+                    ${postOfficeCount} <span style="font-weight: 400; font-size: 11px;">HS</span>
+                </div>
+            </div>
+        `;
+        
         legendEl.innerHTML = legendHTML;
+        if (window.lucide) window.lucide.createIcons();
     }
 };
 
