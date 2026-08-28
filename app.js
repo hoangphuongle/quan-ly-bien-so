@@ -442,6 +442,11 @@ window.app.openEditModal = (id) => {
         document.getElementById('editPlateCost').value = record.plateCost || 0;
         document.getElementById('editPoliceCost').value = record.policeCost || 0;
         document.getElementById('editStaffReimbursed').value = record.staffReimbursed || 0;
+        if (document.getElementById('editIsPostOffice')) {
+            document.getElementById('editIsPostOffice').checked = !!record.isPostOffice;
+            document.getElementById('postOfficeDateGroup').style.display = record.isPostOffice ? 'flex' : 'none';
+            document.getElementById('editPostOfficeDate').value = record.postOfficeDate || '';
+        }
     }
 
     document.getElementById('editTaxDate').value = record.taxDate || '';
@@ -495,6 +500,10 @@ window.app.submitEditForm = (e) => {
             record.plateCost = Number(document.getElementById('editPlateCost').value) || 0;
             record.policeCost = Number(document.getElementById('editPoliceCost').value) || 0;
             record.staffReimbursed = Number(document.getElementById('editStaffReimbursed').value) || 0;
+            if (document.getElementById('editIsPostOffice')) {
+                record.isPostOffice = document.getElementById('editIsPostOffice').checked;
+                record.postOfficeDate = document.getElementById('editPostOfficeDate').value;
+            }
             record.actualCost = record.taxCost + record.plateCost + record.policeCost;
         }
         
@@ -1026,6 +1035,10 @@ function renderTable() {
         let taxStatus = getFeeStatus(isTaxPaid, r.payTaxDate, r.taxSource);
         let plateStatus = getFeeStatus(isPlatePaid, r.payPlateDate, r.plateSource);
         let policeStatus = getFeeStatus(isPolicePaid, r.payPoliceDate, r.policeSource);
+        
+        if (r.isPostOffice) {
+            policeStatus.text += `<br><span style="color:var(--accent-orange);font-size:0.95em;">(Bưu điện${r.postOfficeDate ? ': ' + formatDate(r.postOfficeDate) : ''})</span>`;
+        }
 
         const tr = document.createElement('tr');
         tr.innerHTML = `

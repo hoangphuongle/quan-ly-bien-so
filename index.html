@@ -614,12 +614,23 @@
                                 min="0"></div>
                         <div class="form-group"><label>Phí biển số</label><input type="number" id="editPlateCost"
                                 min="0"></div>
-                        <div class="form-group"><label>Phí công an</label><input type="number" id="editPoliceCost"
-                                min="0"></div>
+                        <div class="form-group"><label>Phí công an</label><input type="number" id="editPoliceCost" min="0">
+                            <div style="display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                                <input type="checkbox" id="editIsPostOffice" style="width: auto; margin: 0;" onchange="document.getElementById('postOfficeDateGroup').style.display = this.checked ? 'flex' : 'none'">
+                                <label for="editIsPostOffice" style="margin: 0; font-size: 11px; cursor: pointer; color: var(--accent-orange);">Về bưu điện (70k)</label>
+                            </div>
+                        </div>
                         <div class="form-group"
                             style="border-left: 2px dashed rgba(16, 185, 129, 0.3); padding-left: 12px;">
                             <label style="color: var(--brand-green);">Đã được hoàn ứng</label>
                             <input type="number" id="editStaffReimbursed" min="0" placeholder="Tiền chủ trả lại">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row" id="postOfficeDateGroup" style="display: none; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label style="color: var(--accent-orange);">Ngày nhận bưu điện</label>
+                            <input type="date" id="editPostOfficeDate">
                         </div>
                     </div>
 
@@ -737,7 +748,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script type="module" src="app.js?v=53"></script>
+    <script type="module" src="app.js?v=54"></script>
 </body>
 
 </html>
