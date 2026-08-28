@@ -730,11 +730,12 @@ function updateStats() {
         if (r.payPlateDate) totalCost += actualPlate;
         if (r.payPoliceDate) totalCost += actualPolice;
 
-        let hasReceivedAdvance = r.hasReceivedAdvance !== false;
-        if (r.taxSource === 'staff_no_advance' || r.plateSource === 'staff_no_advance' || r.policeSource === 'staff_no_advance') {
-            hasReceivedAdvance = false;
-        }
-        let receivedAdvance = hasReceivedAdvance ? expectedCost : 0;
+        let taxAdvance = r.taxSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? r.actualCost - 205000 : actualTax);
+        let plateAdvance = r.plateSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 105000 : actualPlate);
+        let policeAdvance = r.policeSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 100000 : 100000);
+        let receivedAdvance = taxAdvance + plateAdvance + policeAdvance;
+        
+        let hasReceivedAdvance = receivedAdvance > 0;
         
         // Theo yêu cầu: cái nào nộp rồi trừ ra khỏi tiền đang giữ luôn
         // Tiền đang giữ = Tổng dự kiến - Tổng đã nộp (bất kể nguồn nào)
@@ -964,11 +965,12 @@ function renderTable() {
         sumTotalCost += totalCost;
 
         let staffReimbursed = r.staffReimbursed || 0;
-        let hasReceivedAdvance = r.hasReceivedAdvance !== false;
-        if (r.taxSource === 'staff_no_advance' || r.plateSource === 'staff_no_advance' || r.policeSource === 'staff_no_advance') {
-            hasReceivedAdvance = false;
-        }
-        let receivedAdvance = hasReceivedAdvance ? expectedCost : 0;
+        let taxAdvance = r.taxSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? r.actualCost - 205000 : actualTax);
+        let plateAdvance = r.plateSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 105000 : actualPlate);
+        let policeAdvance = r.policeSource === 'staff_no_advance' ? 0 : (r.actualCost > 0 ? 100000 : 100000);
+        let receivedAdvance = taxAdvance + plateAdvance + policeAdvance;
+        
+        let hasReceivedAdvance = receivedAdvance > 0;
         let currentCash = receivedAdvance - totalCost;
         let pendingReimbursement = advancedForRecord - staffReimbursed;
         
@@ -1024,9 +1026,9 @@ function renderTable() {
             <td>${r.customerName}</td>
             <td>${formatDate(r.taxDate)}</td>
             <td style="background: rgba(59, 130, 246, 0.03);">
-                <div style="font-weight: 700; color: #3B82F6;">${formatMoney(expectedCost)}</div>
+                <div style="font-weight: 700; color: #3B82F6;">${formatMoney(receivedAdvance)}</div>
                 <div style="font-size: 11px; margin-top: 2px;">
-                    ${!hasReceivedAdvance ? `<span style="color: var(--accent-orange); font-weight: 600;">Chưa nhận tạm ứng</span>` : (currentCash > 0 ? `<span style="color: #059669; font-weight: 600;">Chờ nộp: ${formatMoney(currentCash)}</span>` : `<span style="color: var(--text-secondary);">${expectedCost > 0 ? 'Đã chi hết' : 'Tạm ứng (Đủ)'}</span>`)}
+                    ${!hasReceivedAdvance ? `<span style="color: var(--accent-orange); font-weight: 600;">Chưa nhận tạm ứng</span>` : (currentCash > 0 ? `<span style="color: #059669; font-weight: 600;">Chờ nộp: ${formatMoney(currentCash)}</span>` : `<span style="color: var(--text-secondary);">${receivedAdvance > 0 ? 'Đã chi hết' : 'Tạm ứng (Đủ)'}</span>`)}
                 </div>
             </td>
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualTax)}</div><small class="${isTaxPaid ? '' : 'text-secondary'}" style="${isTaxPaid ? 'color: #10B981; font-weight: 600;' : ''}">${taxStatusText}</small></td>
