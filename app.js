@@ -1064,7 +1064,7 @@ function renderTable() {
             <td style="background: rgba(59, 130, 246, 0.03);">
                 <div style="font-weight: 700; color: #3B82F6;">${formatMoney(receivedAdvance)}</div>
                 <div style="font-size: 11px; margin-top: 2px;">
-                    ${!hasReceivedAdvance ? `<span style="color: var(--accent-red); font-weight: 600;">Chưa nhận tạm ứng</span>` : (currentCash > 0 ? `<span style="color: #059669; font-weight: 600;">Chờ nộp: ${formatMoney(currentCash)}</span>` : `<span style="color: var(--text-secondary);">${receivedAdvance > 0 ? 'Đã chi hết' : 'Tạm ứng (Đủ)'}</span>`)}
+                    ${!hasReceivedAdvance ? `<span style="color: var(--accent-red); font-weight: 600;">Chưa nhận tạm ứng</span>` : `<span style="color: var(--text-secondary);">${receivedAdvance > 0 ? 'Đã tạm ứng' : 'Tạm ứng (Đủ)'}</span>`}
                 </div>
             </td>
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualTax)}</div><small class="${taxStatus.class}" style="${taxStatus.color}">${taxStatus.text}</small></td>
@@ -1072,6 +1072,9 @@ function renderTable() {
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualPlate)}</div><small class="${plateStatus.class}" style="${plateStatus.color}">${plateStatus.text}</small></td>
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualPolice)}</div><small class="${policeStatus.class}" style="${policeStatus.color}">${policeStatus.text}</small></td>
             <td style="${totalStyle}"><strong style="color: #10B981; font-size: 1.1em;">${formatMoney(totalCost)}</strong></td>
+            <td style="background: rgba(239, 68, 68, 0.03); text-align: center;">
+                ${currentCash > 0 ? `<strong style="color: #DC2626; font-size: 1.05em;">${formatMoney(currentCash)}</strong><div style="font-size: 11px; color: #DC2626; margin-top: 2px; font-weight: 600;">Nộp lại</div>` : '<span style="color: var(--text-secondary); font-size: 11px;">-</span>'}
+            </td>
             <td>${missingOrFullHtml}</td>
             <td>${formatDate(r.sendServiceDate)}</td>
             <td>${formatDate(r.callCustomerDate)}</td>
@@ -1097,9 +1100,9 @@ function renderTable() {
                 <td style="color: var(--text-primary);">${formatMoney(sumPlate)}</td>
                 <td style="color: var(--text-primary);">${formatMoney(sumPolice)}</td>
                 <td style="color: #10B981; font-size: 1.1em;">${formatMoney(sumTotalCost)}</td>
+                <td style="color: #DC2626; font-size: 1.1em; font-weight: bold; background: rgba(239, 68, 68, 0.03); text-align: center;">${sumPending > 0 ? formatMoney(sumPending) : '-'}</td>
                 <td>
-                    ${sumPending > 0 ? `<div style="color: var(--brand-green); font-weight: bold; font-size: 0.9em;">Tổng chờ nộp: ${formatMoney(sumPending)}</div>` : ''}
-                    ${sumAdvanced > 0 ? `<div style="color: #EF4444; font-weight: bold; font-size: 0.9em; margin-top: 4px;">Tổng NV ứng: ${formatMoney(sumAdvanced)}</div>` : ''}
+                    ${sumAdvanced > 0 ? `<div style="color: #EF4444; font-weight: bold; font-size: 0.9em;">Tổng NV ứng: ${formatMoney(sumAdvanced)}</div>` : ''}
                 </td>
                 <td colspan="10"></td>
             </tr>
