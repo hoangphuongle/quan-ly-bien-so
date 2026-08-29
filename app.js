@@ -1055,6 +1055,9 @@ function renderTable() {
         }
 
         const tr = document.createElement('tr');
+        if (r.deliverPlateDate) {
+            tr.style.backgroundColor = 'rgba(16, 185, 129, 0.08)'; // Green tint for completed
+        }
         tr.innerHTML = `
             <td>
                 <button class="btn-outline-small" onclick="window.app.openEditModal('${r.id}')">Sửa</button>
