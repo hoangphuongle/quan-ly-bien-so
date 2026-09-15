@@ -15,7 +15,7 @@
     <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css?v=47">
+    <link rel="stylesheet" href="style.css?v=49">
 </head>
 
 <body>
@@ -56,10 +56,6 @@
                     <i data-lucide="table-2"></i>
                     <span>Tiến độ chi tiết</span>
                 </a>
-                <a href="#" class="nav-item" id="nav-expenses" onclick="window.switchView('expenses')">
-                    <i data-lucide="calculator"></i>
-                    <span>Sổ Thu/Chi</span>
-                </a>
                 <a href="#" class="nav-item" id="nav-settings" onclick="window.switchView('settings')">
                     <i data-lucide="settings"></i>
                     <span>Cài đặt</span>
@@ -95,12 +91,6 @@
                     </div>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-outline"
-                        style="margin-right: 12px; color: var(--accent-orange); border-color: rgba(245, 158, 11, 0.5);"
-                        onclick="window.app.openExpenseModal()">
-                        <i data-lucide="calculator"></i>
-                        <span>Thêm Thu/Chi</span>
-                    </button>
                     <button class="btn btn-primary" onclick="window.app.openModal()">
                         <i data-lucide="plus"></i>
                         <span>Thêm Hồ Sơ Mới</span>
@@ -353,34 +343,6 @@
                 </div>
             </div>
 
-            <!-- Expenses View -->
-            <div id="expensesView" style="display: none;">
-                <div class="card" style="padding: 0;">
-                    <div class="card-header" style="padding: 24px;">
-                        <h2>Sổ Thu/Chi Khác</h2>
-                        <p style="color: var(--text-secondary); margin-top: 4px;">Ghi chép các khoản mua sắm lặt vặt,
-                            ứng tiền thuế riêng lẻ...</p>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Thời gian</th>
-                                    <th>Loại</th>
-                                    <th>Lý do / Nội dung</th>
-                                    <th>Số tiền</th>
-                                    <th>Nguồn tiền</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="expensesTableBody">
-                                <!-- Expense rows injected here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
             <!-- Settings View -->
             <div id="settingsView" style="display: none;">
                 <div class="card" style="margin-top: 24px;">
@@ -414,53 +376,6 @@
         </main>
     </div>
 
-    <!-- Modal Form (Expense) -->
-    <div class="modal-overlay" id="expenseModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Thêm Thu/Chi Khác</h2>
-                <button class="btn-close" onclick="window.app.closeExpenseModal()"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <form id="expenseForm" onsubmit="window.app.submitExpenseForm(event)">
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Loại giao dịch</label>
-                            <select id="expenseType">
-                                <option value="chi">Chi tiền (Mua đồ, trả phí...)</option>
-                                <option value="thu">Thu tiền (Nhận thêm, hoàn tiền...)</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Số tiền (VNĐ)</label>
-                            <input type="number" id="expenseAmount" required placeholder="517000" min="0">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Lý do / Nội dung chi tiết</label>
-                        <input type="text" id="expenseReason" required
-                            placeholder="Ví dụ: Mua keo vá, bút xoá, ổ điện...">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Nguồn tiền (Ai trả/nhận?)</label>
-                        <select id="expensePayer">
-                            <option value="staff">Nhân viên (Tiền túi cá nhân)</option>
-                            <option value="fund">Cửa hàng (Trích từ Két sắt/Quỹ)</option>
-                        </select>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline"
-                            onclick="window.app.closeExpenseModal()">Hủy</button>
-                        <button type="submit" class="btn btn-primary"
-                            style="background-color: var(--accent-orange);">Lưu Giao Dịch</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     </div>
 
     <!-- Modal Form (Car Type) -->
@@ -745,7 +660,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script type="module" src="app.js?v=61"></script>
+    <script type="module" src="app.js?v=63"></script>
 </body>
 
 </html>
