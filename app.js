@@ -150,6 +150,7 @@ async function initApp() {
     // Cleanup old UI state
     document.getElementById('loadingOverlay')?.remove();
 
+    updateCarTypeDropdowns();
     switchView(state.currentView);
     updateStats();
 }
@@ -316,6 +317,13 @@ function updateCarTypeDropdowns() {
         carTypeSelect.innerHTML = optionsHtml;
         if (types.find(t => t.id === currentVal) || currentVal === 'other') carTypeSelect.value = currentVal;
     }
+
+    const editCarTypeSelect = document.getElementById('editCarType');
+    if (editCarTypeSelect) {
+        let currentVal = editCarTypeSelect.value;
+        editCarTypeSelect.innerHTML = optionsHtml;
+        if (types.find(t => t.id === currentVal) || currentVal === 'other') editCarTypeSelect.value = currentVal;
+    }
 }
 
 // Car Type Modal Actions
@@ -432,6 +440,7 @@ window.app.openEditModal = (id) => {
     
     document.getElementById('editId').value = record.id;
     document.getElementById('editCustomerName').value = record.customerName;
+    if (document.getElementById('editCarType')) document.getElementById('editCarType').value = record.carType || 'other';
     document.getElementById('editPlateNumber').value = record.plateNumber || '';
     document.getElementById('editPlatePaymentMethod').value = record.platePaymentMethod || 'cash';
     document.getElementById('editHasTaxCode').checked = record.hasTaxCode;
@@ -485,6 +494,7 @@ window.app.submitEditForm = (e) => {
     const record = state.records.find(r => r.id === id);
     if (record) {
         record.customerName = document.getElementById('editCustomerName').value;
+        if (document.getElementById('editCarType')) record.carType = document.getElementById('editCarType').value;
         record.plateNumber = document.getElementById('editPlateNumber').value;
         if (document.getElementById('editPlatePaymentMethod')) {
             record.platePaymentMethod = document.getElementById('editPlatePaymentMethod').value;
@@ -1054,6 +1064,13 @@ function renderTable() {
             policeStatus.text += `<br><span style="color:var(--accent-orange);font-size:0.95em;">(Bưu điện${r.postOfficeDate ? ': ' + formatDate(r.postOfficeDate) : ''})</span>`;
         }
 
+        let carTypeName = r.carType || '...';
+        if (state.carTypes) {
+            let foundType = state.carTypes.find(c => c.id === r.carType);
+            if (foundType) carTypeName = foundType.name;
+            else if (r.carType === 'other') carTypeName = 'Khác';
+        }
+
         const tr = document.createElement('tr');
         if (r.deliverPlateDate) {
             tr.style.backgroundColor = 'rgba(16, 185, 129, 0.08)'; // Green tint for completed
@@ -1063,7 +1080,7 @@ function renderTable() {
                 <button class="btn-outline-small" onclick="window.app.openEditModal('${r.id}')">Sửa</button>
             </td>
             <td>${r.customerName}</td>
-            <td>${formatDate(r.taxDate)}</td>
+            <td style="font-size: 11px; font-weight: 600; color: var(--text-secondary);">${carTypeName}</td>
             <td style="background: rgba(59, 130, 246, 0.03);">
                 <div style="font-weight: 700; color: #3B82F6;">${formatMoney(receivedAdvance)}</div>
                 <div style="font-size: 11px; margin-top: 2px;">
@@ -1071,7 +1088,6 @@ function renderTable() {
                 </div>
             </td>
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualTax)}</div><small class="${taxStatus.class}" style="${taxStatus.color}">${taxStatus.text}</small></td>
-            <td>${formatDate(r.pressPlateDate)}</td>
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualPlate)}</div><small class="${plateStatus.class}" style="${plateStatus.color}">${plateStatus.text}</small></td>
             <td style="${moneyStyle}"><div style="${moneyText}">${formatMoney(actualPolice)}</div><small class="${policeStatus.class}" style="${policeStatus.color}">${policeStatus.text}</small></td>
             <td style="${totalStyle}"><strong style="color: #10B981; font-size: 1.1em;">${formatMoney(totalCost)}</strong></td>
@@ -1079,16 +1095,9 @@ function renderTable() {
                 ${currentCash > 0 ? `<strong style="color: #DC2626; font-size: 1.05em;">${formatMoney(currentCash)}</strong><div style="font-size: 11px; color: #DC2626; margin-top: 2px; font-weight: 600;">Nộp lại</div>` : '<span style="color: var(--text-secondary); font-size: 11px;">-</span>'}
             </td>
             <td>${missingOrFullHtml}</td>
-            <td>${formatDate(r.sendServiceDate)}</td>
-            <td>${formatDate(r.callCustomerDate)}</td>
-            <td>${formatDate(r.deliverCarDate)}</td>
             <td>${r.plateNumber || '...'}</td>
             <td>${formatDate(r.promisePlateDate)}</td>
-            <td>${r.regNote || ''}</td>
-            <td>${r.plateNote || ''}</td>
-            <td>${formatDate(r.receivePlateDate)}</td>
             <td>${formatDate(r.deliverPlateDate)}</td>
-            <td>${r.deliverStaff || ''}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -1099,7 +1108,6 @@ function renderTable() {
                 <td colspan="3" style="text-align: right; padding-right: 16px;">TỔNG CỘNG:</td>
                 <td style="color: #3B82F6;">${formatMoney(sumExpected)}</td>
                 <td style="color: var(--text-primary);">${formatMoney(sumTax)}</td>
-                <td></td> <!-- Ngày bấm biển -->
                 <td style="color: var(--text-primary);">${formatMoney(sumPlate)}</td>
                 <td style="color: var(--text-primary);">${formatMoney(sumPolice)}</td>
                 <td style="color: #10B981; font-size: 1.1em;">${formatMoney(sumTotalCost)}</td>
@@ -1107,7 +1115,7 @@ function renderTable() {
                 <td>
                     ${sumAdvanced > 0 ? `<div style="color: #EF4444; font-weight: bold; font-size: 0.9em;">Tổng NV ứng: ${formatMoney(sumAdvanced)}</div>` : ''}
                 </td>
-                <td colspan="10"></td>
+                <td colspan="4"></td>
             </tr>
         `;
     }
