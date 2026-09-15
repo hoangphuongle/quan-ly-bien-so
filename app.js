@@ -230,25 +230,16 @@ function switchView(viewName) {
     if (viewName === 'dashboard') {
         document.getElementById('dashboardView').style.display = 'block';
         document.getElementById('tableView').style.display = 'none';
-        document.getElementById('expensesView').style.display = 'none';
         document.getElementById('settingsView').style.display = 'none';
         renderBoard();
     } else if (viewName === 'table') {
         document.getElementById('dashboardView').style.display = 'none';
         document.getElementById('tableView').style.display = 'block';
-        document.getElementById('expensesView').style.display = 'none';
         document.getElementById('settingsView').style.display = 'none';
         renderTable();
-    } else if (viewName === 'expenses') {
-        document.getElementById('dashboardView').style.display = 'none';
-        document.getElementById('tableView').style.display = 'none';
-        document.getElementById('expensesView').style.display = 'block';
-        document.getElementById('settingsView').style.display = 'none';
-        renderExpenses();
     } else if (viewName === 'settings') {
         document.getElementById('dashboardView').style.display = 'none';
         document.getElementById('tableView').style.display = 'none';
-        document.getElementById('expensesView').style.display = 'none';
         document.getElementById('settingsView').style.display = 'block';
         renderSettings();
     }
