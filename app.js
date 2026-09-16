@@ -246,32 +246,6 @@ function switchView(viewName) {
 }
 
 // Expose app methods
-window.app.openExpenseModal = () => { document.getElementById('expenseModal').classList.add('active'); };
-window.app.closeExpenseModal = () => { 
-    document.getElementById('expenseModal').classList.remove('active'); 
-    document.getElementById('expenseForm').reset();
-};
-window.app.submitExpenseForm = (e) => {
-    e.preventDefault();
-    const newExpense = {
-        id: Date.now().toString(),
-        type: document.getElementById('expenseType').value,
-        amount: Number(document.getElementById('expenseAmount').value),
-        reason: document.getElementById('expenseReason').value,
-        payer: document.getElementById('expensePayer').value,
-        date: new Date().toISOString()
-    };
-    state.expenses = state.expenses || [];
-    state.expenses.push(newExpense);
-    saveState();
-    window.app.closeExpenseModal();
-    window.app.updateStats();
-    if (state.currentView === 'expenses') {
-        renderExpenses();
-    } else {
-        alert("Đã lưu thành công vào Sổ Thu/Chi!");
-    }
-};
 
 // Render Settings (Car Types)
 function renderSettings() {
@@ -1111,52 +1085,6 @@ function renderTable() {
         `;
     }
 }
-
-function renderExpenses() {
-    const tbody = document.getElementById('expensesTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    
-    if(!state.expenses || state.expenses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">Chưa có giao dịch nào</td></tr>';
-        return;
-    }
-
-    const sortedExpenses = [...state.expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    sortedExpenses.forEach(e => {
-        const tr = document.createElement('tr');
-        const isChi = e.type === 'chi';
-        const typeHtml = isChi 
-            ? `<span class="badge red">Chi tiền</span>` 
-            : `<span class="badge green">Thu tiền</span>`;
-        const amountHtml = isChi
-            ? `<span class="text-red">-${formatMoney(e.amount)}</span>`
-            : `<span class="text-green">+${formatMoney(e.amount)}</span>`;
-        const payerText = e.payer === 'staff' ? 'Nhân viên ứng' : 'Quỹ cửa hàng';
-
-        tr.innerHTML = `
-            <td>${formatDate(e.date)}</td>
-            <td>${typeHtml}</td>
-            <td>${e.reason}</td>
-            <td>${amountHtml}</td>
-            <td>${payerText}</td>
-            <td>
-                <button class="btn-outline-small" onclick="window.app.deleteExpense('${e.id}')" style="color: var(--status-red); border-color: rgba(239, 68, 68, 0.3);">Xóa</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-window.app.deleteExpense = (id) => {
-    if(confirm('Bạn có chắc muốn xóa giao dịch này?')) {
-        state.expenses = state.expenses.filter(e => e.id !== id);
-        saveState();
-        window.app.updateStats();
-        if (state.currentView === 'expenses') renderExpenses();
-    }
-};
 
 // End of modal logic
 
