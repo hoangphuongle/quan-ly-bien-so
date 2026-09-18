@@ -234,7 +234,7 @@ function switchView(viewName) {
         renderBoard();
     } else if (viewName === 'table') {
         document.getElementById('dashboardView').style.display = 'none';
-        document.getElementById('tableView').style.display = 'block';
+        document.getElementById('tableView').style.display = 'flex';
         document.getElementById('settingsView').style.display = 'none';
         renderTable();
     } else if (viewName === 'settings') {
