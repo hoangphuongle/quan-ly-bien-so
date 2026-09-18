@@ -22,10 +22,11 @@
     --card-dark: #FFFFFF; 
     --card-dark-text: #111827;
 
-    /* Effects - No Glass */
-    --glass-blur: none;
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    /* Effects - Premium Shadows */
+    --glass-blur: blur(12px);
+    --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 10px 24px -8px rgba(0, 0, 0, 0.08);
+    --shadow-sm: 0 4px 12px -2px rgba(0, 0, 0, 0.04);
     
     /* Layout */
     --sidebar-width: 260px;
@@ -278,11 +279,11 @@ body {
     box-shadow: var(--shadow-sm);
     position: relative;
     overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
 }
 
 .card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
     box-shadow: var(--shadow-md);
 }
 
@@ -424,13 +425,14 @@ body {
     padding: 16px;
     cursor: grab;
     box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .task-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px) scale(1.02);
     box-shadow: var(--shadow-md);
     border-color: rgba(249, 115, 22, 0.3); /* subtle orange outline */
+    z-index: 10;
 }
 
 .task-card:active {
@@ -507,7 +509,7 @@ body {
     width: 100%;
     max-width: 500px;
     transform: translateY(20px) scale(0.95);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-shadow: var(--shadow-lg);
 }
 
@@ -593,10 +595,10 @@ body {
     margin-top: 24px;
 }
 
-/* To-Do List */
-.todo-fab {
+/* Floating Action Buttons */
+.add-fab {
     position: fixed;
-    bottom: 30px;
+    bottom: 100px;
     right: 30px;
     width: 60px;
     height: 60px;
@@ -613,9 +615,34 @@ body {
     border: none;
 }
 
-.todo-fab:hover {
+.add-fab:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 16px rgba(16, 185, 129, 0.6);
+}
+
+/* To-Do List */
+.todo-fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    background-color: var(--accent-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+}
+
+.todo-fab:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.6);
 }
 
 .todo-panel {
