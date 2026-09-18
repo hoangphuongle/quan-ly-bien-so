@@ -777,7 +777,10 @@ body {
 /* Table Styles */
 .table-responsive {
     overflow-x: auto;
+    overflow-y: auto;
     width: 100%;
+    max-height: calc(100vh - 180px);
+    max-height: calc(100dvh - 180px);
 }
 
 .data-table {
