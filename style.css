@@ -1028,5 +1028,20 @@ body {
         width: 100%;
         margin: 0 !important;
     }
+
+    /* Floating Action Buttons (Mobile) */
+    .add-fab {
+        width: 48px;
+        height: 48px;
+        bottom: 84px;
+        right: 16px;
+    }
+
+    .todo-fab {
+        width: 48px;
+        height: 48px;
+        bottom: 24px;
+        right: 16px;
+    }
 }
 
