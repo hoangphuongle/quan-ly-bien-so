@@ -41,7 +41,7 @@ function checkLogin() {
 window.app.login = (e) => {
     e.preventDefault();
     const pw = document.getElementById('loginPassword').value;
-    if (pw === '123456') {
+    if (pw === 'amgc300*') {
         sessionStorage.setItem('motodash_logged_in', 'true');
         document.getElementById('loginError').style.display = 'none';
         checkLogin();
